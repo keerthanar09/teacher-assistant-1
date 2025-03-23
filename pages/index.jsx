@@ -10,7 +10,7 @@ const Home = () => {
       <div className="flex flex-wrap justify-evenly  ">
         <div className="card">
           Generate a Test with Artificial Intelligence Now!<br/>
-          <a href = "/quiz-gen">
+          <a href = "/quiz-generation">
           <button className="blue-button-with-hover rounded-lg">
             Click Here
           </button>

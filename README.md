@@ -38,3 +38,8 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+
+
+npx prisma db push to migrate database changes
+npx prisma studio to view models and related details in localhost:5555
+schema.prisma file contains the schema for the teacher's assistant database. It is a PostgreSQL database.

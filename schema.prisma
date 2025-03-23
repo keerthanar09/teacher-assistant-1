@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model Teacher{
+  id   Int @id @default(autoincrement())
+  name String
+  email String @unique
+  password String
+  rooms     Room[]
+  quizzes   Quiz[]
+  students  Student[]
+}
+
+model Room{
+  id Int @id @default(autoincrement())
+  createdBy Teacher @relation(fields:[createdById], references:[id])
+  createdById Int
+  capacity Int //The number of students that can fit in a room, as entered by a teacher.
+  name String
+  code String @unique
+  students     Student[]
+}
+
+model Quiz {
+  formId       String  @id
+  desc String?
+  title     String
+  subject String
+  createdAt DateTime @default(now())
+  createdBy Teacher @relation(fields: [createdById], references: [id]) //relation between the Quiz and Teacher table 
+  createdById Int  //relation scalar field used in the @relation attribute above
+  quizTakens  QuizTaken[]
+}
+
+model Student {
+  id            Int     @id @default(autoincrement())
+  name          String
+  email         String   @unique
+  password String
+  taughtBy Teacher @relation(fields: [teacherId], references: [id])
+  teacherId Int
+  inRoom Room @relation(fields:[roomId], references:[id])
+  roomId Int
+  quizTakens QuizTaken[]
+
+}
+
+model QuizTaken {
+  id Int @id @default(autoincrement())
+  student Student @relation(fields:[studentId], references: [id]) //relation to show the students who took the given Quiz
+  studentId Int
+  grades Decimal
+  quizTaken Quiz @relation(fields:[quizId], references: [formId])
+  quizId String
+}
+
