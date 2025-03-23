@@ -43,3 +43,7 @@ next-env.d.ts
 
 .vercel
 .env*.local
+
+teacher-assistant-1\test-project-453107-7f5cb93d0889.json
+
+*.json
