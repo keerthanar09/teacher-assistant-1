@@ -73,10 +73,10 @@ const QuizGen = () => {
     <div className="create-quiz-box p-10">
       <h2 className="text-center text-5xl">Test Generator</h2>
       <p className=" ml-5 mt-10 ">Enter the topic for the test: </p>
-      <div className=" h-15 w-135 bg-blue-300 m-5 text-black ">
+      <div className=" h-15 w-full bg-blue-300 m-5 text-black ">
         <input
           value={input}
-          className="w-150 h-15 border p-7 w-full text-black"
+          className="w-full h-15 border p-7 w-full text-black"
           type="text"
           row={4}
           placeholder="12 Questions on Linear Algebra..."
