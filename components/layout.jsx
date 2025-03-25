@@ -1,6 +1,6 @@
 
 import '@styles/globals.css';
-import NavBar from '@components/NavBar';
+import NavBar from '@components/TeacherNav';
 
  
 export default function Layout({ children }) {

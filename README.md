@@ -43,3 +43,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/b
 npx prisma db push to migrate database changes
 npx prisma studio to view models and related details in localhost:5555
 schema.prisma file contains the schema for the teacher's assistant database. It is a PostgreSQL database.
+
+installed lucide-react, jsonwebtoken, and nodemailer

@@ -1,14 +1,26 @@
-
+import TeacherNav from "@components/TeacherNav";
+import StudentNav from "@/components/StudentNav";
+import { useRouter } from "next/router";
 import "../styles/globals.css";
-import NavBar from "@components/NavBar";
+import LoginNav from "@/components/LoginNav";
 
 function MyApp({ Component, pageProps }) {
+  const router = useRouter();
+  const path = router.pathname;
+
+  let Navbar;
+  if (path.startsWith("/teacher")) {
+    Navbar = <TeacherNav />;
+  } else if (path.startsWith("/student")) {
+    Navbar = <StudentNav />;
+  } else {
+    Navbar = <LoginNav />;
+  }
+
   return (
     <>
-      <NavBar/>
-      <main className="p-6">
-        <Component {...pageProps} />
-      </main>
+      {Navbar}
+      <Component {...pageProps} />
     </>
   );
 }

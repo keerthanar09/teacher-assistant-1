@@ -1,13 +1,12 @@
 "use client";
 
 import React from 'react'
-import { Menu, X } from "lucide-react";
-import Link from 'next/link';
+import { X } from "lucide-react";
 import Image from 'next/image';
 import {useState, useEffect} from 'react';
 // import {signIn, signOut, useSession, getProviders} from 'next-auth/react';
 
-const NavBar = () => {
+const LoginNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <nav className='flex flex-between justify-between mb-10 pt-3 ml-4 mt-3'>
@@ -45,15 +44,9 @@ const NavBar = () => {
           </button>
         </div>
         <nav className="p-4 flex flex-col space-y-4">
-          <a href="/teacher" className="hover:text-blue-600">Dashboard</a>
-          <a href="/teacher/create-room" className="hover:text-blue-600">Create Room</a>
-          <a href="/teacher/quiz-create" className="hover:text-blue-600">Create Quiz</a>
-          <a href="/teacher/quiz-generation" className="hover:text-blue-600">Generate Quiz</a>
-          <a href="/teacher/student-details" className="hover:text-blue-600">View Student Details</a>
-          <a href="/teacher/submissions" className="hover:text-blue-600">View Submissions</a>
-          <a href="/teacher/profile" className="hover:text-blue-600">Profile</a>
-          <a href="/teacher/settings" className="hover:text-blue-600">Settings</a>
-          <a href="#" className="hover:text-blue-600">Logout</a>
+          <a href="/teacher" className="hover:text-blue-600">Home</a>
+          <a href="/teacher/create-room" className="hover:text-blue-600">Sign Up</a>
+          <a href="/teacher/quiz-create" className="hover:text-blue-600">Log In</a>
         </nav>
       </div>
     </div>
@@ -66,4 +59,4 @@ const NavBar = () => {
   )
 }
 
-export default NavBar
+export default LoginNav
