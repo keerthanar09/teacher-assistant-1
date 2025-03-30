@@ -1,47 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Online Teacher's Assistant Application
 
-## Getting Started
+This online application is created with the needs of teachers in mind, and to **eliminate** their *repetitive and time consuming* tasks by **automating** them, so that they have more time and energy to focus on their students, and so that the teachers are not overburdened.
 
-First, run the development server:
+## Key Features of the OTAA
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Implemented Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. AI powered Quiz generation using Google Forms API
+2. Automated Quiz Evaluation
+3. User Authentication
+4. Automated Feedback for students
+5. Ease of access to important information
+6. Quiz Creation
+7. Separate dashboards for teachers and students.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+### Upcoming Features
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+1. Smart grouping of students to form efficient study groups, based on each student's strenghts and weaknesses.
+2. Ability for students to create their own quizzes for practice.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+## Hardware Requirements
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Software Requirements
 
-## Learn More
+1. Windows 10 or above.
+2. Visual Studio Code or a similar code editor.
+3. Node.js (Next.js)
+4. Gemini API
+5. Google Forms API
+6. PostgreSQL
 
-To learn more about Next.js, take a look at the following resources:
+## Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+1. Next.js 
+2. Tailwind CSS
+3. Gemini API
+4. Google Forms API
+5. Prisma ORM
+6. PostgreSQL
+7. React
+**Refer to package.json for all the additional installed packages!**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Set-up Instructions
 
-## Deploy on Vercel
+**Step 1: Clone this GitHub Repository**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Copy this repository link and run `git clone` in your device's terminal. Then run `cd teacher-assistant-1` to enter the project folder.
+Run `code .` to open the project in Visual Studio Code.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+**Step 2: Install dependencies**
+
+Run `npm install` in the VS Code terminal to install dependencies, and the node_modules folder.
+
+**Step 3: Set-up your .env file**
+
+In the teacher-assistant-1 folder, create a `.env` file and add the following environment variables with appropriate values.
+
+*Get Gemini API key, client email and private key from google AI studio.*
+GEMINI_API_KEY
+GOOGLE_CLIENT_EMAIL
+GOOGLE_PRIVATE_KEY
+
+*Get database related variables from vercel after deployment*
+POSTGRES_URL
+POSTGRES_PRISMA_URL
+SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_URL
+POSTGRES_URL_NON_POOLING
+SUPABASE_JWT_SECRET
+POSTGRES_USER
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+POSTGRES_DATABASE="postgres"
+SUPABASE_SERVICE_ROLE_KEY
+POSTGRES_HOST
+SUPABASE_ANON_KEY
+EMAIL_USER
+EMAIL_PASS
+JWT_SECRET
+
+*Obtain the google variables from google cloud console.*
+GOOGLE_CLIENT_ID
+GOOGLE_CLIENT_SECRET
+NEXTAUTH_SECRET
+NEXTAUTH_URL=http://localhost:3000
+
+**Step 4: Run Prisma Migrations**
+
+Run `npx prisma migrate dev` in the VS Code terminal.
+
+**Step 5: Start development server**
+
+Run `npm run dev` in the VS Code terminal. *This project is ready for deployment in vercel.*
+
+## References
+
+1) [Next.js Documentation](https://nextjs.org/docs) 
+2) [Learn Next.js](https://nextjs.org/learn-pages-router) 
+3) [TailwindCSS Documentation](https://tailwindcss.com/docs/)
+4) [Prisma ORM Documentation](https://www.prisma.io/docs)
+5) [Google Forms API Documentation](https://developers.google.com/apps-script/reference/forms)
+6) [Gemini API Documentation](https://ai.google.dev/gemini-api/docs)
+
+## Authors
+
+1. [Keerthana R](https://github.com/keerthanar09)
+2. Monica S
+3. Sneha K M
+4. Poorvi V Jain
 
 
-npx prisma db push to migrate database changes
-npx prisma studio to view models and related details in localhost:5555
-schema.prisma file contains the schema for the teacher's assistant database. It is a PostgreSQL database.
 
-installed lucide-react, jsonwebtoken, and nodemailer
+
+
+
+
+

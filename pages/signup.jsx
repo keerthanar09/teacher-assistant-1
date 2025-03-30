@@ -104,8 +104,8 @@ export default function Signup() {
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
               required
             >
-              <option value="student">Student</option>
-              <option value="teacher">Teacher</option>
+              <option value="STUDENT">Student</option>
+              <option value="TEACHER">Teacher</option>
             </select>
 
             <button type="submit" className="w-full p-3 bg-blue-500 rounded-md hover:bg-blue-700">Signup</button>

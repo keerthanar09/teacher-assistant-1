@@ -1,5 +1,15 @@
 import { useRouter } from 'next/router';
 
+import { getSession } from "next-auth/react";
+
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+  if (!session || session.user.role !== "STUDENT") {
+    return { redirect: { destination: "/", permanent: false } };
+  }
+  return { props: { session } };
+}
+
 export default function StudentDashboard() {
   const router = useRouter();
 

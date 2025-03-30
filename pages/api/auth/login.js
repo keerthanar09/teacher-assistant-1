@@ -1,21 +1,25 @@
-import { prisma } from '../../../lib/prisma';
-import { generateToken } from '../../../lib/auth';
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
-export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    const { email, password } = req.body;
+export default function SignIn() {
+  const { data: session } = useSession();
+  const router = useRouter();
 
-    const user = await prisma.user.findUnique({ where: { email } });
-
-    if (!user || user.password !== password) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+  useEffect(() => {
+    if (session) {
+      if (session.user.role === "TEACHER") {
+        router.push("/teacher");
+      } else if (session.user.role === "STUDENT") {
+        router.push("/student");
+      }
     }
+  }, [session]);
 
-    const token = generateToken(user);
-
-    // Include role in response
-    res.status(200).json({ message: 'Login successful!', token, role: user.role });
-  } else {
-    res.status(405).end();
-  }
+  return (
+    <div>
+      <h1>Sign in</h1>
+      <button onClick={() => signIn("google")}>Sign in with Google</button>
+    </div>
+  );
 }

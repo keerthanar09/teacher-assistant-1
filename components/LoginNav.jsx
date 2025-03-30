@@ -44,9 +44,9 @@ const LoginNav = () => {
           </button>
         </div>
         <nav className="p-4 flex flex-col space-y-4">
-          <a href="/teacher" className="hover:text-blue-600">Home</a>
-          <a href="/teacher/create-room" className="hover:text-blue-600">Sign Up</a>
-          <a href="/teacher/quiz-create" className="hover:text-blue-600">Log In</a>
+          <a href="/" className="hover:text-blue-600">Home</a>
+          <a href="/signup" className="hover:text-blue-600">Sign Up</a>
+          <a href="/login" className="hover:text-blue-600">Log In</a>
         </nav>
       </div>
     </div>

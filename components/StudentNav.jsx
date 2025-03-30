@@ -4,9 +4,12 @@ import React from 'react'
 import { X } from "lucide-react";
 import Image from 'next/image';
 import {useState, useEffect} from 'react';
-// import {signIn, signOut, useSession, getProviders} from 'next-auth/react';
+import { signOut } from "next-auth/react";
 
 const StudentNav = () => {
+    const handleLogout = () => {
+      signOut({ callbackUrl: "/login" }); 
+    };
   const [isOpen, setIsOpen] = useState(false);
   return (
     <nav className='flex flex-between justify-between mb-10 pt-3 ml-4 mt-3'>
@@ -50,13 +53,12 @@ const StudentNav = () => {
           <a href="/student/quizHistory" className="hover:text-blue-600">View Quiz History</a>
           <a href="/student/profile" className="hover:text-blue-600">Profile</a>
           <a href="/student/settings" className="hover:text-blue-600">Settings</a>
-          <a href="#" className="hover:text-blue-600">Logout</a>
         </nav>
       </div>
     </div>
         
         <div className="flex flex-row justify-end">
-          <button className = "serious-button">Log out</button>
+          <button className = "serious-button" onClick={handleLogout}>Log out</button>
         </div>
         
     </nav>

@@ -8,71 +8,54 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-model Teacher{
-  id   Int @id @default(autoincrement())
-  name String
-  email String @unique
+model User {
+  id       Int    @id @default(autoincrement())
+  username     String
+  email    String @unique
   password String
-  rooms     Room[]
-  quizzes   Quiz[]
-  students  Student[]
-}
-
-model Room{
-  id Int @id @default(autoincrement())
-  createdBy Teacher @relation(fields:[createdById], references:[id])
-  createdById Int
-  capacity Int //The number of students that can fit in a room, as entered by a teacher.
-  name String
-  code String @unique
-  students     Student[]
-}
-
-model Quiz {
-  formId       String  @id
-  desc String?
-  title     String
-  subject String
-  createdAt DateTime @default(now())
-  createdBy Teacher @relation(fields: [createdById], references: [id]) //relation between the Quiz and Teacher table 
-  createdById Int  //relation scalar field used in the @relation attribute above
-  quizTakens  QuizTaken[]
-}
-
-model Student {
-  id            Int     @id @default(autoincrement())
-  name          String
-  email         String   @unique
-  password String
-  taughtBy Teacher @relation(fields: [teacherId], references: [id])
-  teacherId Int
-  inRoom Room @relation(fields:[roomId], references:[id])
-  roomId Int
+  role     String  
+  
+  // Relations
+  roomsCreated Room[] @relation("TeacherRooms")
+  rooms     Room[] @relation("UserRooms") // Users (both teacher & student) can belong to rooms
+  quizzes   Quiz[] @relation("TeacherQuizzes") // Only for teachers
   quizTakens QuizTaken[]
 
 }
 
-model QuizTaken {
-  id Int @id @default(autoincrement())
-  student Student @relation(fields:[studentId], references: [id]) //relation to show the students who took the given Quiz
-  studentId Int
-  grades Decimal
-  quizTaken Quiz @relation(fields:[quizId], references: [formId])
-  quizId String
+
+model Room {
+  id          Int    @id @default(autoincrement())
+  createdBy   User   @relation(fields:[createdById], references:[id], name: "TeacherRooms")
+  createdById Int
+  capacity    Int
+  name        String
+  code        String @unique
+  students    User[] @relation("UserRooms")
 }
 
-model User {
-  id       String  @id @default(uuid())
-  username String
-  email    String  @unique
-  password String
-  role     String  // 'teacher' or 'student'
-  
+model Quiz {
+  formId      String @id
+  title       String
+  subject     String
+  createdAt   DateTime @default(now())
+  createdBy   User  @relation(fields:[createdById], references:[id], name: "TeacherQuizzes") 
+  createdById Int
+  quizTakens  QuizTaken[]
+}
+
+model QuizTaken {
+  id         Int  @id @default(autoincrement())
+  user       User @relation(fields:[userId], references:[id])
+  userId     Int
+  quiz       Quiz @relation(fields:[quizId], references:[formId])
+  quizId     String
+  grades     Decimal
 }
 
 model Verification {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String   @id @default(uuid()) 
+  email     String  @unique
   code      String
   expiresAt DateTime
 }
