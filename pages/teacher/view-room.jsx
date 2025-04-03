@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-  if (!session || session.user.role !== "STUDENT") {
+  if (!session || session.user.role !== "TEACHER") {
     return { redirect: { destination: "/", permanent: false } };
   }
 
@@ -31,7 +31,7 @@ export default function TeacherRooms({ rooms }) {
           <div
             key={room.id}
             className="bg-blueShade p-6 rounded-lg shadow-lg text-center cursor-pointer hover:bg-blue-700"
-            onClick={() => router.push(`/student/room/${room.id}`)}
+            onClick={() => router.push(`/teacher/room/${room.id}`)}
           >
             <h2 className="text-2xl mb-2">{room.name}</h2>
             <p className="text-lg">Class Code: {room.classCode}</p>

@@ -1,9 +1,11 @@
+//Navigation bar that appears for all teacher's pages 
+
 "use client";
 
 import React from 'react'
-import { X } from "lucide-react";
-import Image from 'next/image';
-import {useState, useEffect} from 'react';
+import { X } from "lucide-react"; //Go to the lucide-react icons page to view all the icons, it's a better option than bootstrap for next.js applications.
+import Image from 'next/image'; 
+import {useState} from 'react';
 import { signOut } from "next-auth/react";
 
 const TeacherNav = () => {
@@ -49,7 +51,7 @@ const TeacherNav = () => {
         </div>
         <nav className="p-4 flex flex-col space-y-4">
           <a href="/teacher" className="hover:text-blue-600">Dashboard</a>
-          <a href="/teacher/create-room" className="hover:text-blue-600">Create Room</a>
+          <a href="/teacher/view-room" className="hover:text-blue-600">View Classes</a>
           <a href="/teacher/quiz-create" className="hover:text-blue-600">Create Quiz</a>
           <a href="/teacher/quiz-generation" className="hover:text-blue-600">Generate Quiz</a>
           <a href="/teacher/student-details" className="hover:text-blue-600">View Student Details</a>

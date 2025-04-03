@@ -28,14 +28,14 @@ model Room {
   id          Int    @id @default(autoincrement())
   createdBy   User   @relation(fields:[createdById], references:[id], name: "TeacherRooms")
   createdById Int
-  capacity    Int
   name        String
-  code        String @unique
+  classCode       String @unique
   students    User[] @relation("UserRooms")
 }
 
 model Quiz {
   formId      String @id
+  desc String?
   title       String
   subject     String
   createdAt   DateTime @default(now())

@@ -1,4 +1,3 @@
-
 import '@styles/globals.css';
 import NavBar from '@components/TeacherNav';
 

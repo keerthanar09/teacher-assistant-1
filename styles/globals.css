@@ -29,12 +29,12 @@ body {
 @layer components{
 
   .blue-button-with-hover{
-    @apply rounded-lg bg-blue-400 border-1 border-black hover:bg-blue-500 focus:outline-2 focus:outline-offset-2 
+    @apply rounded-lg bg-sky-600 text-white border-1 border-black hover:bg-blue-500 focus:outline-2 focus:outline-offset-2 
     focus:outline-blue-400 active:bg-blue-400 items-center justify-center p-1;
   }
 
   .card{
-    @apply mt-20 mr-10 ml-10 h-50 w-50 rounded-lg 
+    @apply m-10 h-50 w-50 rounded-lg 
     bg-gradient-to-r from-blue-400 to-blue-500 pt-15 pb-20 text-center;
   }
 
@@ -59,6 +59,14 @@ body {
 
   .text-logo{
     @apply ml-2 text-xl font-mono text-white hidden md:inline;
+  }
+
+  .col-card{
+    @apply bg-linear-to-r from-sky-400 to-sky-600 rounded-lg m-10 text-center p-10 shadow-xl shadow-blue-900;
+  }
+
+  .input-text{
+    @apply m-3 p-2 bg-blue-300 text-black border-1 border-black rounded-lg;
   }
 
 }

@@ -1,9 +1,9 @@
 "use client";
-
+//Navigation bar that appears for all student pages after student logs in.
 import React from 'react'
 import { X } from "lucide-react";
 import Image from 'next/image';
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import { signOut } from "next-auth/react";
 
 const StudentNav = () => {
