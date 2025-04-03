@@ -12,7 +12,7 @@ export async function getServerSideProps(context) {
   const quizzes = await prisma.quiz.findMany({
     where: { createdById: session.user.id }, // Only fetch quizzes created by the logged-in teacher
     select: { formId: true, title: true },
-  }||[]);
+  } || []);
 
   const submissions = await prisma.quizTaken.findMany({
     include: {
@@ -21,7 +21,13 @@ export async function getServerSideProps(context) {
     },
   });
 
-  return { props: { initialSubmissions: submissions, initialQuizzes: quizzes } };
+  // Convert Decimal grades to Number
+  const serializedSubmissions = submissions.map(submission => ({
+    ...submission,
+    grades: submission.grades.toNumber(), // Fix JSON serialization error
+  }));
+
+  return { props: { initialSubmissions: serializedSubmissions, initialQuizzes: quizzes } };
 }
 
 export default function Submissions({ initialSubmissions, initialQuizzes }) {
