@@ -65,7 +65,7 @@ export default function StudentDashboard() {
           </button>
         </div>
         {/* Join Class Section */}
-        <div className="bg-green-700 p-6 rounded-lg shadow-lg text-center">
+        <div className="bg-blue-700 p-6 rounded-lg shadow-lg text-center justify-center">
           <h2 className="text-2xl mb-4">Join a Class</h2>
           <input
             type="text"
@@ -76,7 +76,7 @@ export default function StudentDashboard() {
           />
           {error && <p className="text-red-500">{error}</p>}
           <button
-            className="px-6 py-3 bg-green-500 rounded-lg hover:bg-green-700 transition-all transform hover:scale-105"
+            className="px-6 py-3 bg-sky-500 rounded-lg hover:bg-sky-700 transition-all transform hover:scale-105"
             onClick={handleJoinClass}
           >
             Join Class
