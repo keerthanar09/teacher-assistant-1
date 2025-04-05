@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
-import { getSession } from "next-auth/react";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { getServerSession } from "next-auth/next";
 import prisma from "../../lib/prisma";
 
 export async function getServerSideProps(context) {
-  const session = await getSession(context);
+  const session = await getServerSession(context.req, context.res, authOptions);
 
-  // Redirect if not logged in or not a teacher
-  if (!session || !session.user || session.user.role !== "TEACHER") {
-    console.warn("Unauthorized access attempt or session not found.");
+  if (!session || session.user.role !== "TEACHER") {
     return { redirect: { destination: "/", permanent: false } };
   }
-
   try {
     // Fetch quizzes created by the teacher
     const quizzes = await prisma.quiz.findMany({
