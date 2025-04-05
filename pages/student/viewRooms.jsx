@@ -13,10 +13,21 @@ export async function getServerSideProps(context) {
         return { redirect: { destination: "/", permanent: false } };
       }
 
-  const rooms = await prisma.room.findMany({
-    where: { createdById: session.user.id },
-    select: { id: true, name: true, classCode: true },
-  });
+      const rooms = await prisma.room.findMany({
+        where: {
+          students: {
+            some: {
+              id: session.user.dbId,
+            },
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          classCode: true,
+        },
+      });
+      
 
   return { props: { rooms } };
 }
