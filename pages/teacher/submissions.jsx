@@ -4,31 +4,50 @@ import prisma from "../../lib/prisma";
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-  if (!session || session.user.role !== "TEACHER") {
+
+  // Redirect if not logged in or not a teacher
+  if (!session || !session.user || session.user.role !== "TEACHER") {
+    console.warn("Unauthorized access attempt or session not found.");
     return { redirect: { destination: "/", permanent: false } };
   }
 
-  // Fetch quizzes created by the teacher
-  const quizzes = await prisma.quiz.findMany({
-    where: { createdById: session.user.id }, // Only fetch quizzes created by the logged-in teacher
-    select: { formId: true, title: true },
-  } || []);
+  try {
+    // Fetch quizzes created by the teacher
+    const quizzes = await prisma.quiz.findMany({
+      where: { createdById: session.user.id },
+      select: { formId: true, title: true },
+    });
 
-  const submissions = await prisma.quizTaken.findMany({
-    include: {
-      user: { select: { username: true } },
-      quiz: { select: { title: true } },
-    },
-  });
+    const submissions = await prisma.quizTaken.findMany({
+      include: {
+        user: { select: { username: true } },
+        quiz: { select: { title: true } },
+      },
+    });
 
-  // Convert Decimal grades to Number
-  const serializedSubmissions = submissions.map(submission => ({
-    ...submission,
-    grades: submission.grades.toNumber(), // Fix JSON serialization error
-  }));
+    // Convert Decimal grades to Number
+    const serializedSubmissions = submissions.map((submission) => ({
+      ...submission,
+      grades: submission.grades?.toNumber?.() || 0,
+    }));
 
-  return { props: { initialSubmissions: serializedSubmissions, initialQuizzes: quizzes } };
+    return {
+      props: {
+        initialSubmissions: serializedSubmissions,
+        initialQuizzes: quizzes || [],
+      },
+    };
+  } catch (error) {
+    console.error("Error in getServerSideProps:", error);
+    return {
+      props: {
+        initialSubmissions: [],
+        initialQuizzes: [],
+      },
+    };
+  }
 }
+
 
 export default function Submissions({ initialSubmissions, initialQuizzes }) {
   const [submissions, setSubmissions] = useState(initialSubmissions);
