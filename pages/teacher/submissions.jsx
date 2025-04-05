@@ -10,7 +10,6 @@ export async function getServerSideProps(context) {
     return { redirect: { destination: "/", permanent: false } };
   }
   try {
-    // Fetch quizzes created by the teacher
     const quizzes = await prisma.quiz.findMany({
       where: { createdById: session.user.id },
       select: { formId: true, title: true },
@@ -23,7 +22,7 @@ export async function getServerSideProps(context) {
       },
     });
 
-    // Convert Decimal grades to Number
+    // Convert Decimal grades to Number since decimal cannot be serialized by JSON.
     const serializedSubmissions = submissions.map((submission) => ({
       ...submission,
       grades: submission.grades?.toNumber?.() || 0,
@@ -64,7 +63,6 @@ export default function Submissions({ initialSubmissions, initialQuizzes }) {
     }
   }
 
-  // Fetch quiz results from Google Forms API
   async function fetchQuizResults() {
     if (!selectedFormId) {
       alert("Please select a quiz first!");
@@ -73,7 +71,7 @@ export default function Submissions({ initialSubmissions, initialQuizzes }) {
 
     setLoading(true);
     try {
-      console.log("📤 Sending request to /api/evaluation with formId:", selectedFormId);
+      console.log("Sending request to /api/evaluation with formId:", selectedFormId);
 
       const res = await fetch("/api/evaluation", {
         method: "POST",
@@ -82,12 +80,12 @@ export default function Submissions({ initialSubmissions, initialQuizzes }) {
       });
 
       const data = await res.json();
-      console.log("✅ Response from /api/evaluation:", data);
+      console.log("Response from /api/evaluation:", data);
       alert(data.message || "Results updated!");
 
       await fetchUpdatedSubmissions();
     } catch (error) {
-      console.error("❌ Error fetching quiz results:", error);
+      console.error("Error fetching quiz results:", error);
       alert("Failed to fetch quiz results.");
     }
     setLoading(false);

@@ -1,15 +1,16 @@
 import { useRouter } from 'next/router';
-import { getSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export async function getServerSideProps(context) {
-  const session = await getSession(context);
-  if (!session || session.user.role !== "STUDENT") {
-    return { redirect: { destination: "/", permanent: false } };
-  }
+  const session = await getServerSession(context.req, context.res, authOptions);
+    
+      if (!session || session.user.role !== "STUDENT") {
+        return { redirect: { destination: "/", permanent: false } };
+      }
 
   const { id } = context.params;
   const room = await prisma.room.findUnique({
@@ -18,10 +19,9 @@ export async function getServerSideProps(context) {
   });
 
   const quizzes = await prisma.quiz.findMany({
-    where: { roomId: room.id }
+    where: { roomId: room.id },
   });
 
-  // Convert createdAt field to a string
   const serializedQuizzes = quizzes.map(quiz => ({
     ...quiz,
     createdAt: quiz.createdAt.toISOString(),
@@ -31,8 +31,6 @@ export async function getServerSideProps(context) {
 }
 
 export default function RoomDetails({ room, quizzes }) {
-  const router = useRouter();
-
   return (
     <div className="min-h-screen bg-dark text-white p-10">
       <h1 className="text-4xl font-bold mb-6 text-center animate-fade-in">{room.name}</h1>

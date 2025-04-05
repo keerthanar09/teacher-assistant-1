@@ -1,16 +1,19 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import { getSession, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { PrismaClient } from '@prisma/client';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 const prisma = new PrismaClient();
 
 
 export async function getServerSideProps(context) {
-  const session = await getSession(context);
-  if (!session || session.user.role !== "STUDENT") {
-    return { redirect: { destination: "/", permanent: false } };
-  }
+  const session = await getServerSession(context.req, context.res, authOptions);
+    
+      if (!session || session.user.role !== "STUDENT") {
+        return { redirect: { destination: "/", permanent: false } };
+      }
   return { props: { session } };
 }
 

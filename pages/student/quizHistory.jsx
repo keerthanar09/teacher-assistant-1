@@ -1,16 +1,26 @@
-import { getSession } from "next-auth/react";
-import prisma from "../../lib/prisma";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { getServerSession } from "next-auth/next";
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export async function getServerSideProps(context) {
-  const session = await getSession(context);
+  const session = await getServerSession(context.req, context.res, authOptions);
+    
   if (!session || session.user.role !== "STUDENT") {
     return { redirect: { destination: "/", permanent: false } };
   }
 
-  const quizHistory = await prisma.quizTaken.findMany({
+  const quizHistoryRaw = await prisma.quizTaken.findMany({
     where: { userId: session.user.dbId },
     include: { quiz: { select: { title: true } } },
   });
+
+    // Convert Decimal grades to Number since decimal cannot be serialized by JSON.
+    const quizHistory = quizHistoryRaw.map((quiz) => ({
+    ...quiz,
+    grades: quiz.grades.toNumber(),  
+  }));
 
   return { props: { quizHistory } };
 }
