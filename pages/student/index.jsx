@@ -1,6 +1,10 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { getSession, useSession } from "next-auth/react";
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
@@ -40,11 +44,12 @@ export default function StudentDashboard() {
     }
   };
 
+
   return (
     <div className="min-h-screen bg-dark text-white p-10">
-      <h1 className="text-4xl font-bold mb-6 text-center animate-fade-in">Student Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Search Quiz Section */}
+      <h1 className="text-4xl font-bold mb-6 text-center">Student Dashboard</h1>
+
+        {/* Search Quiz Section
         <div className="bg-blueShade p-6 rounded-lg shadow-lg text-center">
           <h2 className="text-2xl mb-4">Search for Quizzes</h2>
           <button
@@ -55,7 +60,7 @@ export default function StudentDashboard() {
           </button>
         </div>
         {/* View Results Section */}
-        <div className="bg-blueShade p-6 rounded-lg shadow-lg text-center">
+        {/* <div className="bg-blueShade p-6 rounded-lg shadow-lg text-center">
           <h2 className="text-2xl mb-4">View Results</h2>
           <button
             className="px-6 py-3 bg-blue-500 rounded-lg hover:bg-blue-700 transition-all transform hover:scale-105"
@@ -63,14 +68,14 @@ export default function StudentDashboard() {
           >
             View Results
           </button>
-        </div>
+        </div>  */}
         {/* Join Class Section */}
-        <div className="bg-blue-700 p-6 rounded-lg shadow-lg text-center justify-center">
+        <div className="w-full bg-linear-to-r from-background to-sky-900 p-6 rounded-lg shadow-xl shadow-sky-800 text-center">
           <h2 className="text-2xl mb-4">Join a Class</h2>
           <input
             type="text"
             placeholder="Enter Class Code"
-            className="p-2 text-black rounded-lg w-full mb-4"
+            className="p-2 bg-blue-400 text-black rounded-lg w-full mb-4"
             value={classCode}
             onChange={(e) => setClassCode(e.target.value)}
           />
@@ -83,6 +88,6 @@ export default function StudentDashboard() {
           </button>
         </div>
       </div>
-    </div>
+
   );
 }

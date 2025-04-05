@@ -1,31 +1,26 @@
-//API to post a quiz
+//API to post a quiz in a room.
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
-    const { teacherId, classId, title, subject, desc } = req.body;
+    const { formId, classId } = req.body; // get the quiz formId and new roomId
 
-    if (!teacherId || !classId || !title || !subject) {
-      return res.status(400).json({ error: "All fields are required." });
+    if (!formId || !classId) {
+      return res.status(400).json({ error: "Form ID and Class ID are required." });
     }
 
     try {
-      // Create quiz
-      const quiz = await prisma.quiz.create({
-        data: {
-          title,
-          subject,
-          desc,
-          createdById: teacherId,
-          classId,
-        },
+      // Update the quiz
+      const updatedQuiz = await prisma.quiz.update({
+        where: { formId }, // update by formId (quiz ID)
+        data: { roomId: classId }, // set the new roomId
       });
 
-      return res.status(201).json(quiz);
+      return res.status(200).json(updatedQuiz);
     } catch (error) {
-      console.error("Error posting quiz:", error);
+      console.error("Error updating quiz:", error);
       return res.status(500).json({ error: "Internal Server Error" });
     }
   }

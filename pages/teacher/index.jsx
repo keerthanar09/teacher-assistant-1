@@ -114,7 +114,7 @@ export default function TeacherDashboard() {
             <p className="text-gray-400 animate-pulse">Loading classes...</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {classes.length > 0 ? (
+              {/* {classes.length > 0 ? (
                 classes.map((cls) => (
                   <div
                     key={cls.id}
@@ -126,16 +126,16 @@ export default function TeacherDashboard() {
                 ))
               ) : (
                 <p className="text-gray-400">No classes found.</p>
-              )}
+              )} */}
             </div>
           )}
           <p>
-            <button className="blue-button-with-hover">
+            <button className="blue-button-with-hover" onClick={() => router.push('/teacher/view-room')}>
               View Your Classes
             </button>
           </p>
         </div>
-        <div className="flex flex-wrap justify-center">
+        {/* <div className="flex flex-wrap justify-center">
           <div className="card">
             The quiz results are here!
             <button className="blue-button-with-hover">View Quiz</button>
@@ -143,7 +143,7 @@ export default function TeacherDashboard() {
           <div className="card">02</div>
           <div className="card">02</div>
         </div>
-        <div className="col-card">01</div>
+        <div className="col-card">01</div> */}
       </div>
     </div>
   );

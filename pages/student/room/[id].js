@@ -18,7 +18,7 @@ export async function getServerSideProps(context) {
   });
 
   const quizzes = await prisma.quiz.findMany({
-    where: { createdById: room.createdById }
+    where: { roomId: room.id }
   });
 
   // Convert createdAt field to a string

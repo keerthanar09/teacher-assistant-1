@@ -30,7 +30,7 @@ export default function TeacherRooms({ rooms }) {
         {rooms.map((room) => (
           <div
             key={room.id}
-            className="bg-blueShade p-6 rounded-lg shadow-lg text-center cursor-pointer hover:bg-blue-700"
+            className="room-card"
             onClick={() => router.push(`/student/room/${room.id}`)}
           >
             <h2 className="text-2xl mb-2">{room.name}</h2>

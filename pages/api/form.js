@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
-  const { questions, title = "Generated Quiz", description } = req.body;
+  const { questions, title, description, subject } = req.body;
 
   try {
     const oauth2Client = new google.auth.OAuth2();
@@ -28,7 +28,7 @@ export default async function handler(req, res) {
     const formResponse = await forms.forms.create({
       requestBody: {
         info: {
-          title: title,
+          title: title || "Generated Quiz",
           description: description || "",
         },
       },
@@ -110,7 +110,7 @@ export default async function handler(req, res) {
         formId,
         title,
         desc: description,
-        subject: "subject if any",
+        subject: subject || "subject if any",
         createdById: session.user.dbId,
       },
     });

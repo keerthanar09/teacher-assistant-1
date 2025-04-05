@@ -38,48 +38,52 @@ const QuizGen = () => {
   const [quiz, setQuiz] = useState([]);
   const [formId, setFormId] = useState("");
   const [loading, setLoading] = useState(false);
+  const [subject, setSubject] = useState("");
 
   const handleSubmit = async () => {
     setLoading(true);
-
-    try{
-    const res = await fetch("/api/gemini/route", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: input }),
-    });
-
-    const data = await res.json();
-    const parsedQuiz = parseQuizResponse(data.text);
-    console.log("Parsed quiz:", parsedQuiz);
-    setQuiz(parsedQuiz);
-
-
-
-    const res1 = await fetch("/api/form", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        formTitle: " Quiz",
-        questions: parsedQuiz,
-      }),
-    });
-    const data1 = await res1.json();
-        if (res1.ok) {
-          setFormId(data1.formId);
-          setResponse(`Form created! Form ID: ${data1.formId}`);
-        } else {
-          setResponse(`Error: ${data1.error}`);
-        }
-    }
-    catch(error){
+  
+    try {
+      const res = await fetch("/api/gemini/route", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: input }),
+      });
+  
+      const data = await res.json();
+      const parsedQuiz = parseQuizResponse(data.text);
+      console.log("Parsed quiz:", parsedQuiz);
+      setQuiz(parsedQuiz);
+  
+      // Extract the last word from the input to use as title
+      const words = input.trim().split(/\s+/);
+      const title = words.length > 0 ? words[words.length - 1] : "Untitled";
+  
+      const res1 = await fetch("/api/form", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          questions: parsedQuiz,
+          subject: subject,
+        }),
+      });
+      const data1 = await res1.json();
+  
+      if (res1.ok) {
+        setFormId(data1.formId);
+        setResponse(`Form created! Form ID: ${data1.formId}`);
+      } else {
+        setResponse(`Error: ${data1.error}`);
+      }
+    } catch (error) {
       console.error(error);
       setResponse("An unexpected Error occurred!!!");
     } finally {
       setLoading(false);
     }
   };
-
+  
 
   return (
     <div className="create-quiz-box p-10">
@@ -93,6 +97,17 @@ const QuizGen = () => {
           row={4}
           placeholder="12 Questions on Linear Algebra..."
           onChange={(e) => setInput(e.target.value)}
+          rows={4}
+        />
+      </div>
+      <div className=" h-15 w-full bg-blue-300 m-5 text-black ">
+        <input
+          value={subject}
+          className="w-full h-15 border p-7 w-full text-black"
+          type="text"
+          row={4}
+          placeholder="Enter subject"
+          onChange={(e) => setSubject(e.target.value)}
           rows={4}
         />
       </div>

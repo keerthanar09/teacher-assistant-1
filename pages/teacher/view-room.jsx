@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+
 export async function getServerSideProps(context) {
   const session = await getSession(context);
   if (!session || session.user.role !== "TEACHER") {
@@ -30,7 +31,7 @@ export default function TeacherRooms({ rooms }) {
         {rooms.map((room) => (
           <div
             key={room.id}
-            className="bg-blueShade p-6 rounded-lg shadow-lg text-center cursor-pointer hover:bg-blue-700"
+            className="room-card"
             onClick={() => router.push(`/teacher/room/${room.id}`)}
           >
             <h2 className="text-2xl mb-2">{room.name}</h2>

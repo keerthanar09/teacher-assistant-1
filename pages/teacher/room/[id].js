@@ -36,10 +36,10 @@ export default function RoomDetails({ room, quizzes }) {
 
   const postQuiz = async () => {
     if (!selectedQuiz) return;
-    await fetch("/api/postQuiz", {
+    await fetch("/api/quizzes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ quizId: selectedQuiz, roomId: room.id })
+      body: JSON.stringify({ formId: selectedQuiz, classId: room.id })
     });
     alert("Quiz posted successfully!");
   };

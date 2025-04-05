@@ -62,7 +62,7 @@ export default function Signup() {
 
   return (
     <div className="h-screen bg-dark text-white flex items-center justify-center">
-      <form className="bg-blueShade p-8 rounded-lg shadow shadow-black w-full max-w-md" onSubmit={handleSignup}>
+      <form className="p-8 rounded-lg shadow shadow-blue-300 w-full max-w-md" onSubmit={handleSignup}>
         <h2 className="text-3xl mb-6 text-center">Signup</h2>
 
         <input
@@ -82,7 +82,7 @@ export default function Signup() {
         {codeSent && !verified && (
           <>
             <input
-              className="w-full mb-4 p-3 rounded-md bg-grey text-black"
+              className="w-full mb-4 p-3 rounded-md bg-blue-400 text-black"
               placeholder="Enter Verification Code"
               value={verificationCode}
               onChange={(e) => setVerificationCode(e.target.value)}
@@ -95,11 +95,11 @@ export default function Signup() {
 
         {verified && (
           <>
-            <input className="w-full mb-4 p-3 rounded-md bg-grey text-black" placeholder="Username" required onChange={(e) => setFormData({ ...formData, username: e.target.value })} />
-            <input className="w-full mb-4 p-3 rounded-md bg-grey text-black" placeholder="Password" type="password" required onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
+            <input className="w-full mb-4 p-3 rounded-md bg-blue-300 text-black" placeholder="Username" required onChange={(e) => setFormData({ ...formData, username: e.target.value })} />
+            <input className="w-full mb-4 p-3 rounded-md bg-blue-300 text-black" placeholder="Password" type="password" required onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
 
             <select
-              className="w-full mb-4 p-3 rounded-md bg-grey text-black"
+              className="w-full mb-4 p-3 rounded-md bg-blue-300 text-black"
               value={formData.role}
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
               required

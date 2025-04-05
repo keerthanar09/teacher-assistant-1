@@ -68,5 +68,8 @@ body {
   .input-text{
     @apply m-3 p-2 bg-blue-300 text-black border-1 border-black rounded-lg;
   }
+  .room-card{
+    @apply p-6 bg-linear-to-r from-sky-900 to-sky-600 rounded-lg shadow-lg shadow-blue-300 text-center cursor-pointer hover:bg-blue-700;
+  }
 
 }
