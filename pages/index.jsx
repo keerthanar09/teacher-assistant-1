@@ -7,7 +7,6 @@ export default function Home() {
       <div className="text-center space-y-6 mt-10">
         <h1 className="text-5xl font-bold animate-fade-in">
           Welcome to Teacher's Assistant <br/>
-          (Please revisit the page again on 13-08-2025 since there are some bugs that need fixing 👷🏼‍♀️!!!)
         </h1>
         <p className="text-lg text-grey">
           Empowering teachers to create quizzes with AI and students to enhance learning.
@@ -24,3 +23,4 @@ export default function Home() {
     </div>
   );
 }
+
