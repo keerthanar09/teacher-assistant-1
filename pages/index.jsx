@@ -8,6 +8,9 @@ export default function Home() {
         <h1 className="text-5xl font-bold animate-fade-in">
           Welcome to Teacher's Assistant <br/>
         </h1>
+        <p className="text-2xl text-grey">
+          (Website under development!Updating backend!!)
+        </p>
         <p className="text-lg text-grey">
           Empowering teachers to create quizzes with AI and students to enhance learning.
         </p>
