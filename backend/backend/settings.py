@@ -74,12 +74,17 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv(BASE_DIR/'.env')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'karu karu kangala',
+        'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': 'db.cqeqwqgnqhbcdsspobwt.supabase.co',
         'PORT': '5432',
         "OPTIONS": {"sslmode": "require"},
