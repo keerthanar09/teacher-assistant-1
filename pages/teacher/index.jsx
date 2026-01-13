@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
-  console.log("Session in getServerSideProps:", session); // Debugging
+  console.log("Session in getServerSideProps:", session); 
 
 
   if (!session || session.user.role !== "TEACHER") {

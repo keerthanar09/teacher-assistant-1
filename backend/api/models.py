@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 class Role(models.Model):
@@ -8,9 +9,10 @@ class Role(models.Model):
     def __str__(self):
         return self.name
 
-class User(models.Model):
+class User(AbstractUser):
     id = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=150)
+    username = models.CharField(max_length=150, unique=True)
+    fullname= models.CharField(max_length=255, default="")
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=255)
     role = models.ForeignKey(Role, on_delete=models.PROTECT)
