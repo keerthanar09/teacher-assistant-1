@@ -3,9 +3,11 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import *
-# import jwt
 from django.db import IntegrityError, transaction
 from .serializers import *
+from rest_framework.exceptions import AuthenticationFailed
+from datetime import datetime, timezone, timedelta
+import jwt
 # Create your views here.
 
 
@@ -24,3 +26,31 @@ class RegisterView(APIView):
                 'error':'A user with this username or email already exists.'
                         }, status=status.HTTP_409_CONFLICT)
         
+
+class LoginView(APIView):
+    def post(self, request):
+        email = request.data['email']
+        password = request.data['password']
+
+        user = User.objects.filter(email=email).first()
+        if user is None:
+            raise AuthenticationFailed('User does not exist')
+
+        if not user.check_password(password):
+            raise AuthenticationFailed('Incorrect Password')
+        
+        payload = {
+            'id' : user.id,
+            'exp': datetime.now(timezone.utc) + timedelta(minutes=60),
+            'iat':datetime.now(timezone.utc)
+
+        }
+        
+        token = jwt.encode(payload, 'secret', algorithm='HS256')
+
+        response = Response()
+        response.set_cookie(key='jwt', value=token, httponly=True)
+        response.data = {
+            'jwt':token
+        }
+        return response

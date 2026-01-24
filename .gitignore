@@ -49,3 +49,9 @@ teacher-assistant-1\test-project-453107-7f5cb93d0889.json
 *.json
 
 backend/venv/
+
+backend/api/__pycache__
+backend/api/migrations
+backend/api/__init__.py
+backend/backend/__pycache__
+backend/backend/__init__.py
