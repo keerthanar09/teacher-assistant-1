@@ -1,25 +1,43 @@
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
+export default async function handler(req, res) {
+  {
+    const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+    if (req.method === "POST") {
+      const { email, password, role } = req.body;
+      const body = JSON.stringify({
+        email,
+        password,
+        role,
+      });
+      console.log(body);
 
-export default function SignIn() {
-  const { data: session } = useSession();
-  const router = useRouter();
+      try {
+        const apires = await fetch(`${BASE_URL}/api/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: body,
+        });
+        const data = await apires.json();
 
-  useEffect(() => {
-    if (session) {
-      if (session.user.role === "TEACHER") {
-        router.push("/teacher");
-      } else if (session.user.role === "STUDENT") {
-        router.push("/student");
+        if (apires.status === 201) {
+          return res.status(201).json({ success: data.success });
+        } else {
+          return res.status(apires.status).json({
+            success: false,
+            error: data?.error || "Registration Failed",
+          });
+        }
+      } catch (err) {
+        console.error("Signup API error:", err);
+        return res.status(500).json({
+          success: false,
+          error: "Something went wrong. Try again.",
+        });
       }
     }
-  }, [session]);
-
-  return (
-    <div>
-      <h1>Sign in</h1>
-      <button onClick={() => signIn("google")}>Sign in with Google</button>
-    </div>
-  );
+  }
+  res.setHeader('Allow', ['POST']);
+  return res.status(405).json({'error':`Method ${req.method} not allowed`});
 }

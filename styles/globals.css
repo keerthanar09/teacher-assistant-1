@@ -71,5 +71,8 @@ body {
   .room-card{
     @apply p-6 bg-linear-to-r from-sky-900 to-sky-600 rounded-lg shadow-lg shadow-blue-300 text-center cursor-pointer hover:bg-blue-700;
   }
+  .auth-input-field{
+    @apply w-full mb-4 p-3 rounded-md bg-blue-400 text-black;
+  }
 
 }

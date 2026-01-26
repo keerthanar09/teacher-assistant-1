@@ -5,17 +5,17 @@ import { PrismaClient } from '@prisma/client';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 
-export async function getServerSideProps(context) {
-  const session = await getServerSession(context.req, context.res, authOptions);
+// export async function getServerSideProps(context) {
+//   const session = await getServerSession(context.req, context.res, authOptions);
     
-      if (!session || session.user.role !== "STUDENT") {
-        return { redirect: { destination: "/", permanent: false } };
-      }
-  return { props: { session } };
-}
+//       if (!session || session.user.role !== "STUDENT") {
+//         return { redirect: { destination: "/", permanent: false } };
+//       }
+//   return { props: { session } };
+// }
 
 export default function StudentDashboard() {
   const router = useRouter();
@@ -23,12 +23,12 @@ export default function StudentDashboard() {
   const [error, setError] = useState("");
   const { data: session, status } = useSession();
 
-  useEffect(() => {
-      if (status === "unauthenticated") {
-        router.push("/login");
-        return;
-      }
-    }, [status, session]);
+  // useEffect(() => {
+  //     if (status === "unauthenticated") {
+  //       router.push("/login");
+  //       return;
+  //     }
+  //   }, [status, session]);
 
   const handleJoinClass = async () => {
     setError("");
