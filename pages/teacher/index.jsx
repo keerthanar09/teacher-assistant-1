@@ -1,20 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
-export async function getServerSideProps(context) {
-  const session = await getServerSession(context.req, context.res, authOptions);
-  console.log("Session in getServerSideProps:", session); 
-
-
-  if (!session || session.user.role !== "TEACHER") {
-    return { redirect: { destination: "/", permanent: false } };
-  }
-
-  return { props: { session } };
-}
 
 export default function TeacherDashboard() {
   const router = useRouter();
@@ -24,14 +12,14 @@ export default function TeacherDashboard() {
   const [loading, setLoading] = useState(true);
   const { data: session, status } = useSession();
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-      return;
-    }
+  // useEffect(() => {
+  //   if (status === "unauthenticated") {
+  //     router.push("/login");
+  //     return;
+  //   }
 
     async function fetchClasses() {
-      if (!session?.user?.dbId) return;
+      // if (!session?.user?.dbId) return;
       try {
         const res = await fetch(`/api/classes?teacherId=${session.user.dbId}`);
         if (!res.ok) throw new Error("Failed to fetch classes");
@@ -44,8 +32,8 @@ export default function TeacherDashboard() {
       }
     }
 
-    if (status === "authenticated" && session?.user?.dbId) fetchClasses();
-  }, [status, session]);
+  //   if (status === "authenticated" && session?.user?.dbId) fetchClasses();
+  // }, [status, session]);
 
 
 

@@ -1,34 +1,35 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { useSession } from "next-auth/react";
-import { PrismaClient } from '@prisma/client';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
-// const prisma = new PrismaClient();
-
-
-// export async function getServerSideProps(context) {
-//   const session = await getServerSession(context.req, context.res, authOptions);
-    
-//       if (!session || session.user.role !== "STUDENT") {
-//         return { redirect: { destination: "/", permanent: false } };
-//       }
-//   return { props: { session } };
-// }
 
 export default function StudentDashboard() {
   const router = useRouter();
   const [classCode, setClassCode] = useState("");
   const [error, setError] = useState("");
   const { data: session, status } = useSession();
+  const [message, setMessage] = useState();
+  const [auth, setAuth] = useState(false);
 
-  // useEffect(() => {
-  //     if (status === "unauthenticated") {
-  //       router.push("/login");
-  //       return;
-  //     }
-  //   }, [status, session]);
+  useEffect(()=> {
+    (
+      async () => {
+        try{const response = await fetch('http://127.0.0.1:8000/api/user', {
+          credentials:'include',
+        });
+        const content = await response.json();
+
+        setMessage(`hi, ${content.name}`)
+        setAuth(true);
+      } catch (err){
+        setMessage(`You are not logged in!`)
+        setAuth(false);
+      }
+        
+      }
+    )
+  })
 
   const handleJoinClass = async () => {
     setError("");

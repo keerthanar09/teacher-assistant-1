@@ -11,6 +11,8 @@ const Login = () => {
   const [error, setError] = useState("");
   const[loading, setLoading] = useState(false);
   const router = useRouter();
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
 
   const {email, password, role} = formData;
 
@@ -23,11 +25,12 @@ const Login = () => {
     setError("");
 
     try{
-      const res = await fetch("api/auth/login", {
+      const res = await fetch(`${BASE_URL}/api/login`, {
         method: "POST", 
         headers: {
           "Content-Type": "application/json",
         },
+        credentials:'include',
         body:JSON.stringify(formData),
       });
       const data = await res.json();
