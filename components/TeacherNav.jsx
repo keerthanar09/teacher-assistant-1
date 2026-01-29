@@ -7,11 +7,21 @@ import { X } from "lucide-react"; //Go to the lucide-react icons page to view al
 import Image from 'next/image'; 
 import {useState} from 'react';
 import { signOut } from "next-auth/react";
+import {useRouter} from "next/navigation";
 
 const TeacherNav = () => {
-  const handleLogout = () => {
-    signOut({ callbackUrl: "/login" }); 
-  };
+    const router = useRouter();
+  const logout = async () => {
+    await fetch('http://localhost:8000/api/logout', {
+      method: "POST", 
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials:'include',
+    }
+    );
+    await router.push('/login');
+  }
   
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -28,7 +38,7 @@ const TeacherNav = () => {
             className ="object-contain" />
             
       </button>
-      <span className="text-logo ml-10 p-5">Teacher's Assistant</span>
+      <span className="text-logo ml-10 p-5">LearnCom</span>
 
       {/*Translucent Overlay */}
       {isOpen && (
@@ -63,7 +73,7 @@ const TeacherNav = () => {
     </div>
         
         <div className="flex flex-row justify-end">
-          <button className = "serious-button" onClick={handleLogout}>Log out</button>
+          <button className = "serious-button" onClick={logout}>Log out</button>
         </div>
         
     </nav>

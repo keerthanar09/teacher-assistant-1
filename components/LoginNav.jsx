@@ -9,6 +9,7 @@ import {useState} from 'react';
 
 const LoginNav = () => {
   const [isOpen, setIsOpen] = useState(false);
+  
   return (
     <nav className="flex flex-between justify-between mb-10 pt-3 ml-4 mt-3">
       <div>
@@ -24,7 +25,7 @@ const LoginNav = () => {
             className="object-contain"
           />
         </button>
-        <span className="text-logo ml-10 p-5">Teacher's Assistant</span>
+        <span className="text-logo ml-10 p-5">LearnCom</span>
 
         {/* Overlay - Clicking it will close the navigation bar */}
         {isOpen && (

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from "next-auth/next";
 

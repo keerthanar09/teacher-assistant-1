@@ -1,6 +1,7 @@
 // import { signIn } from 'next-auth/react';
 import {useState} from 'react';
 import {useRouter} from 'next/navigation';
+import Layout from '@layouts/layout';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -36,6 +37,7 @@ const Login = () => {
       const data = await res.json();
       if (!res.ok){
         setError(data.error ||"Login Failed");
+        alert(error);
 
       } else if(role == "STUDENT") {
         router.push("/student");
@@ -44,6 +46,7 @@ const Login = () => {
       }
     }catch(err){
       setError("Something went wrong");
+      alert(error);
     }
     finally{
       setLoading(false);
@@ -51,7 +54,8 @@ const Login = () => {
   };
   
   return (
-    <div className="h-screen bg-dark text-white flex items-center justify-center">
+    <Layout isAuth={false}>
+      <div className="h-screen bg-dark text-white flex items-center justify-center">
       <form
         className="p-8 rounded-lg shadow shadow-blue-300 w-full max-w-md"
         onSubmit={onSubmit}
@@ -79,9 +83,9 @@ const Login = () => {
       <div className="auth-input-field">
         <p className="text-center text-blue-800 font-mono">Select your role </p>
         <input type="radio" name="role" value="STUDENT" onChange={onChange}/>
-        <label className="m-2" for="STUDENT">STUDENT</label><br></br>
+        <label className="m-2" htmlFor="STUDENT">STUDENT</label><br></br>
         <input type="radio" name="role" value="TEACHER" onChange={onChange}/>
-        <label className="m-2" for="TEACHER">TEACHER</label><br></br>
+        <label className="m-2" htmlFor="TEACHER">TEACHER</label><br></br>
       </div>
         
 
@@ -94,6 +98,8 @@ const Login = () => {
         </button>
       </form>
     </div>
+    </Layout>
+    
   );
 };
 

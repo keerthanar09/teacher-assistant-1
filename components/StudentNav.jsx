@@ -5,11 +5,18 @@ import { X } from "lucide-react";
 import Image from 'next/image';
 import {useState} from 'react';
 import { signOut } from "next-auth/react";
+import {useRouter} from "next/navigation";
 
 const StudentNav = () => {
-    const handleLogout = () => {
-      signOut({ callbackUrl: "/login" }); 
-    };
+  const router = useRouter();
+  const logout = async () => {
+    await fetch('http://localhost:8000/api/logout', {
+      method: "POST", 
+      credentials:'include',
+    }
+    );
+    router.replace('/login');
+  };
   const [isOpen, setIsOpen] = useState(false);
   return (
     <nav className='flex flex-between justify-between mb-10 pt-3 ml-4 mt-3'>
@@ -25,9 +32,8 @@ const StudentNav = () => {
             className ="object-contain" />
             
       </button>
-      <span className="text-logo ml-10 p-5">Teacher's Assistant</span>
+      <span className="text-logo ml-10 p-5">LearnCom</span>
 
-      {/* Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-main opacity-75  mt-15"
@@ -57,7 +63,7 @@ const StudentNav = () => {
     </div>
         
         <div className="flex flex-row justify-end">
-          <button className = "serious-button" onClick={handleLogout}>Log out</button>
+          <button className = "serious-button" onClick={logout}>Log out</button>
         </div>
         
     </nav>
