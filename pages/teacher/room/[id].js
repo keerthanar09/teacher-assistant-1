@@ -1,76 +1,52 @@
-import { useRouter } from 'next/router';
-import { getServerSession } from "next-auth/next";
-import { useEffect, useState } from "react";
-import { PrismaClient } from '@prisma/client';
+import Layout from "@layouts/layout";
+import useAuth from "@hooks/useAuth";
+import { useState, useEffect } from 'react';
+import { useRouter } from "next/router";
 
-const prisma = new PrismaClient();
-
-export async function getServerSideProps(context) {
-   const session = await getServerSession(context.req, context.res, authOptions);
-  
-    if (!session || session.user.role !== "TEACHER") {
-      return { redirect: { destination: "/", permanent: false } };
-    }
-
-  const { id } = context.params;
-  const room = await prisma.room.findUnique({
-    where: { id: parseInt(id) },
-    include: { students: true }
-  });
-
-  const quizzes = await prisma.quiz.findMany({
-    where: { createdById: session.user.id }
-  });
-
-  // Convert createdAt field to a string
-  const serializedQuizzes = quizzes.map(quiz => ({
-    ...quiz,
-    createdAt: quiz.createdAt.toISOString(),
-  }));
-
-  return { props: { session, room, quizzes: serializedQuizzes } };
-}
-
-export default function RoomDetails({ room, quizzes }) {
+export default function RoomPage() {
+  const { user, loading } = useAuth("TEACHER");
   const router = useRouter();
-  const [selectedQuiz, setSelectedQuiz] = useState("");
-
-  const postQuiz = async () => {
-    if (!selectedQuiz) return;
-    await fetch("/api/quizzes", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ formId: selectedQuiz, classId: room.id })
-    });
-    alert("Quiz posted successfully!");
+  const { id, name, classcode, capacity } = router.query;
+  const [quizzes, setQuizzes] = useState([]);
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+  const room = {
+    id, name, classcode, capacity:parseInt(capacity)
   };
 
+  useEffect(() => {
+    if (id) {
+      fetchQuizzes();
+    }
+  }, [id]);
+
+
+
+  async function fetchQuizzes() {
+    try {
+      const res = await fetch(`${BASE_URL}/api/quiz/${roomid}`, {
+        credentials: "include",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setQuizzes(data);
+      }
+    } catch (error) {
+      console.error("Error fetching quizzes:", error);
+    }
+  }
+
+  if (loading || !router.isReady) return null;
+
   return (
-    <div className="min-h-screen bg-dark text-white p-10">
-      <h1 className="text-4xl font-bold mb-6 text-center animate-fade-in">{room.name}</h1>
-      <h2 className="text-2xl mb-4">Students in this room:</h2>
-      <ul>
-        {room.students.map(student => (
-          <li key={student.id}>{student.username} ({student.email})</li>
-        ))}
-      </ul>
-      <h2 className="text-2xl mt-6 mb-4">Post a Quiz</h2>
-      <select
-        className="p-2 rounded bg-gray-800 text-white"
-        value={selectedQuiz}
-        onChange={(e) => setSelectedQuiz(e.target.value)}
-      >
-        <option value="">Select a Quiz</option>
-        {quizzes.map(quiz => (
-          <option key={quiz.formId} value={quiz.formId}>{quiz.title}</option>
-        ))}
-      </select>
-      <button
-        className="ml-4 px-6 py-3 bg-blue-500 rounded-lg hover:bg-blue-700 transition-all transform hover:scale-105"
-        onClick={postQuiz}
-      >
-        Post Quiz
-      </button>
-    </div>
+    <Layout isAuth={true} role="TEACHER">
+      <h1 className="text-center font-mono text-4xl font-bold">{room.name}</h1>
+      <p className="text-center font-mono text-xl">Class Code: {room.classcode}</p>
+      <p className="text-center font-mono">Capacity: {room.capacity}</p>
+      
+      <div className="mt-8">
+        <h2 className="text-2xl font-mono mb-4">Quizzes</h2>
+        {/* Display quizzes and allow creating new ones */}
+      </div>
+    </Layout>
   );
 }

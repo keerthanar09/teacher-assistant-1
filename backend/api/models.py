@@ -25,7 +25,16 @@ class Room(models.Model):
 
     def __str__(self):
         return self.name
+
+class RoomAllotments(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    roomid = models.ForeignKey(Room, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user.username} PART OF {self.roomid.name}"
     
+
 class Quiz(models.Model):
     id = models.AutoField(primary_key=True)
     description = models.TextField()
@@ -38,6 +47,27 @@ class Quiz(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Questions(models.Model):
+    QUESTION_TYPES = [
+        ('MCQ', 'Multiple Choice'),
+        ('DESC', 'Descriptive'),
+    ]
+    id = models.AutoField(primary_key=True)
+    question = models.TextField()
+    questionType = models.CharField(max_length=10, choices=QUESTION_TYPES)
+
+    def __str__(self):
+        return f"{self.id} - Question {self.question}"
+    
+class Options(models.Model):
+    id = models.AutoField(primary_key=True)
+    question = models.ForeignKey(Questions, on_delete=models.CASCADE)
+    option = models.CharField(max_length=255)
+    isCorrect = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.question.question} - option: {self.option}"
 
 class QuizTaken(models.Model):
     id = models.AutoField(primary_key=True)
@@ -48,6 +78,38 @@ class QuizTaken(models.Model):
 
     def __str__(self):  
         return f"{self.user.username} - {self.quiz.title}"
+    
+
+
+class QuizQuestions(models.Model):
+    id = models.AutoField(primary_key=True)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    question = models.ForeignKey(Questions, on_delete=models.CASCADE)
+    order = models.IntegerField(unique=True)
+    marks = models.FloatField()
+    isActive = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.quiz.title} - Question {self.order}"
+
+
+class StudentAnswers(models.Model):
+    id = models.AutoField(primary_key=True)
+    quizTaken = models.ForeignKey(QuizTaken, on_delete=models.CASCADE)
+    question = models.ForeignKey(Questions, on_delete=models.CASCADE)
+    selectedOption = models.ForeignKey(Options, on_delete=models.SET_NULL, null=True, blank=True)
+    descAnswer = models.TextField(null=True, blank=True)
+    marksObtained = models.FloatField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.quizTaken.user.username} - {self.question.id}"
+    
+class DescriptiveEvaluation(models.Model):
+    answer = models.OneToOneField(StudentAnswers, on_delete=models.CASCADE)
+    evaluatedBy = models.ForeignKey(User, on_delete=models.CASCADE)
+    feedback = models.TextField(null=True, blank=True)
+    evaluatedAt = models.DateTimeField(auto_now_add=True)
+
     
 class Verification(models.Model):
     id = models.AutoField(primary_key=True)
