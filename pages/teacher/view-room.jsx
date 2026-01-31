@@ -1,5 +1,9 @@
-
-import React from "react";
+export default function ViewRoom() {
+  return (
+    <div>
+list of rooms    </div>
+  );
+}
 // import { getServerSession } from "next-auth/next";
 // import { authOptions } from "@/pages/api/auth/[...nextauth]"; // make sure you import authOptions
 // import { PrismaClient } from '@prisma/client';

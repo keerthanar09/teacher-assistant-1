@@ -1,5 +1,9 @@
-import React from "react";
-
+export default function ForgotPassword() {
+  return (
+    <div>
+Forgot password    </div>
+  );
+}
 // import { useState } from 'react';
 // import { useRouter } from 'next/router';
 
