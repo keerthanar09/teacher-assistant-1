@@ -9,8 +9,9 @@ import {useRouter} from "next/navigation";
 
 const StudentNav = () => {
   const router = useRouter();
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const logout = async () => {
-    await fetch('http://localhost:8000/api/logout', {
+    await fetch(`${BASE_URL}/api/logout`, {
       method: "POST", 
       credentials:'include',
     }
