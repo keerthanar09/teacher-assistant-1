@@ -1,5 +1,6 @@
 import Layout from "@layouts/layout";
 import useAuth from "@hooks/useAuth";
+import React from "react";
 
 export default function StudentDashboard() {
 
