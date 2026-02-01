@@ -8,6 +8,7 @@ from .serializers import *
 from rest_framework.exceptions import AuthenticationFailed
 from datetime import datetime, timezone, timedelta
 import jwt
+from django.conf import settings
 # Create your views here.
 
 
@@ -49,7 +50,13 @@ class LoginView(APIView):
         token = jwt.encode(payload, 'secret', algorithm='HS256')
 
         response = Response()
-        response.set_cookie(key='jwt', value=token, httponly=True)
+        response.set_cookie(
+            key='jwt', 
+            value=token, 
+            httponly=True,
+            secure=not settings.DEBUG,      # True in production, False in dev
+            samesite='None' if not settings.DEBUG else 'Lax'  # 'None' in production, 'Lax' in dev
+        )        
         response.data = {
             'jwt':token
         }
@@ -76,7 +83,11 @@ class UserView(APIView):
 class LogoutView(APIView):
     def post(self, request):
         response = Response()
-        response.delete_cookie('jwt')
+        response.delete_cookie(
+            'jwt',
+            samesite='None' if not settings.DEBUG else 'Lax',
+            secure=not settings.DEBUG
+        )
         response.data={
             'message':'success'
         }
