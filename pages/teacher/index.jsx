@@ -15,8 +15,11 @@ export default function TeacherDashboard() {
   const router = useRouter();
 
   useEffect(() => {
-    fetchClasses();
-  }, []);
+    if (!loading && user){
+        fetchClasses();
+    }
+    
+  }, [loading, user]);
 
   async function fetchClasses() {
     setLoad(true);

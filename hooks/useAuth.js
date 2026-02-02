@@ -11,6 +11,7 @@ export default function useAuth(requiredRole = null) {
   const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
+    let ismounted = true;
     const checkAuth = async () => {
       try {
         const res = await fetch(`${BASE_URL}/api/user`, {
@@ -26,11 +27,16 @@ export default function useAuth(requiredRole = null) {
             router.replace("/login");
             return;
         }
-        setUser(data);
-        console.log(user);
-        setLoading(false);
+        if (ismounted) {
+          setUser(data);
+          setLoading(false);
+        }
       } catch {
-        router.replace("/login");
+        if(ismounted){
+          setLoading(false);
+          router.replace("/login");
+        }
+        
       }
     };
 

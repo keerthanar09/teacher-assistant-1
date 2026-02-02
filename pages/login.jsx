@@ -21,37 +21,44 @@ const Login = () => {
     setFormData({...formData, [e.target.name]: e.target.value});
 
   const onSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+  e.preventDefault();
+  setLoading(true);
+  setError("");
 
-    try{
-      const res = await fetch(`${BASE_URL}/api/login`, {
-        method: "POST", 
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials:'include',
-        body:JSON.stringify(formData),
-      });
+  try {
+    const res = await fetch(`${BASE_URL}/api/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(formData),
+    });
+
+    if (!res.ok) {
       const data = await res.json();
-      if (!res.ok){
-        setError(data.error ||"Login Failed");
-        alert(error);
+      throw new Error(data.error || "Login failed");
+    }
 
-      } else if(role == "STUDENT") {
-        router.push("/student");
-      } else if(role == "TEACHER") {
-        router.push("/teacher");
-      }
-    }catch(err){
-      setError("Something went wrong");
-      alert(error);
+    const userRes = await fetch(`${BASE_URL}/api/user`, {
+      credentials: "include",
+    });
+
+    if (!userRes.ok) throw new Error("Auth verification failed");
+
+    const user = await userRes.json();
+
+    if (user.role === "TEACHER") {
+      router.replace("/teacher");
+    } else if (user.role === "STUDENT") {
+      router.replace("/student");
     }
-    finally{
-      setLoading(false);
-    }
-  };
+  } catch (err) {
+    setError(err.message);
+    alert(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
   
   return (
     <Layout isAuth={false}>
