@@ -1,6 +1,6 @@
 // import { signIn } from 'next-auth/react';
 import {useState} from 'react';
-import {useRouter} from 'next/navigation';
+import {useRouter} from 'next/router';
 import Layout from '@layouts/layout';
 
 const Login = () => {
@@ -47,9 +47,9 @@ const Login = () => {
     const user = await userRes.json();
 
     if (user.role === "TEACHER") {
-      router.replace("/teacher");
+      router.push("/teacher");
     } else if (user.role === "STUDENT") {
-      router.replace("/student");
+      router.push("/student");
     }
   } catch (err) {
     setError(err.message);
