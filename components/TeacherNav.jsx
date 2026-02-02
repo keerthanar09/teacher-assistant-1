@@ -7,7 +7,7 @@ import { X } from "lucide-react"; //Go to the lucide-react icons page to view al
 import Image from "next/image";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 
 const TeacherNav = () => {
   const router = useRouter();

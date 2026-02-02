@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import Image from 'next/image';
 import {useState} from 'react';
 import { signOut } from "next-auth/react";
-import {useRouter} from "next/navigation";
+import {useRouter} from "next/router";
 
 const StudentNav = () => {
   const router = useRouter();
