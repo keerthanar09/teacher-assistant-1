@@ -115,7 +115,14 @@ if DEBUG:
     ]
 else:
     CORS_ORIGIN_ALLOW_ALL = False
-    CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
+    CORS_ALLOWED_ORIGINS = [
+        origin.strip()
+        for origin in os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
+        if origin.strip()
+    ]
+
+print("DEBUG:", DEBUG)
+print("CORS_ALLOWED_ORIGINS:", CORS_ALLOWED_ORIGINS)
 
 CORS_ALLOW_CREDENTIALS = True
 
