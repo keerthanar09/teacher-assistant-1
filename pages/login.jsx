@@ -12,7 +12,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const[loading, setLoading] = useState(false);
   const router = useRouter();
-  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 
   const {email, password, role} = formData;
@@ -21,43 +21,47 @@ const Login = () => {
     setFormData({...formData, [e.target.name]: e.target.value});
 
   const onSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError("");
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-  try {
-    const res = await fetch(`${BASE_URL}/api/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(formData),
-    });
+    try {
+      const res = await fetch(`${BASE_URL}/api/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(formData),
+      });
 
-    if (!res.ok) {
-      const data = await res.json();
-      throw new Error(data.error || "Login failed");
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Login failed");
+      }
+
+      // Wait for cookie to be set properly
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const userRes = await fetch(`${BASE_URL}/api/user`, {
+        credentials: "include",
+      });
+
+      if (!userRes.ok) throw new Error("Auth verification failed");
+
+      const user = await userRes.json();
+
+      // Use window.location for full page reload to ensure cookie is included
+      if (user.role === "TEACHER") {
+        window.location.href = "/teacher";
+      } else if (user.role === "STUDENT") {
+        window.location.href = "/student";
+      }
+    } catch (err) {
+      setError(err.message);
+      alert(err.message);
+    } finally {
+      setLoading(false);
     }
-
-    const userRes = await fetch(`${BASE_URL}/api/user`, {
-      credentials: "include",
-    });
-
-    if (!userRes.ok) throw new Error("Auth verification failed");
-
-    const user = await userRes.json();
-
-    if (user.role === "TEACHER") {
-      router.push("/teacher");
-    } else if (user.role === "STUDENT") {
-      router.push("/student");
-    }
-  } catch (err) {
-    setError(err.message);
-    alert(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   
   return (
