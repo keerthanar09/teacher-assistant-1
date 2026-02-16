@@ -1,16 +1,17 @@
 import Link from 'next/link';
 import React from "react";
+import Layout from '@layouts/layout';
 
 
 export default function Home() {
   return (
+    <Layout isAuth = {false}>
     <div className="h-screen bg-dark text-white flex flex-col items-center justify-center">
       <div className="text-center space-y-6 mt-10">
         <h1 className="text-5xl font-bold animate-fade-in">
           Welcome to LearnCom <br/>
         </h1>
         <p className="text-2xl text-grey">
-          (Website under development!Updating backend!!)
         </p>
         <p className="text-lg text-grey">
           Your own Learning Community.
@@ -25,6 +26,7 @@ export default function Home() {
         </div>
       </div>
     </div>
+    </Layout>
   );
 }
 

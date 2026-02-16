@@ -85,6 +85,9 @@ const TeacherNav = () => {
             <a href="/teacher/settings" className="hover:text-blue-600">
               Settings
             </a>
+            <a href="/about" className="hover:text-blue-600">
+              About
+            </a>
           </nav>
         </div>
       </div>

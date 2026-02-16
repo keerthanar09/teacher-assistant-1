@@ -59,6 +59,9 @@ const StudentNav = () => {
           <a href="/student/quizHistory" className="hover:text-blue-600">View Quiz History</a>
           <a href="/student/profile" className="hover:text-blue-600">Profile</a>
           <a href="/student/settings" className="hover:text-blue-600">Settings</a>
+          <a href="/about" className="hover:text-blue-600">
+              About
+            </a>
         </nav>
       </div>
     </div>

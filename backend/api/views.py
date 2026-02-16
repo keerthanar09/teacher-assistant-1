@@ -290,7 +290,8 @@ class QuestionListCreate(APIView):
         create_quiz_question = QuizQuestions.objects.create(quiz=quiz, question = create_question, order=order, marks=marks)
         create_quiz_question.save()
 
-        return Response({'message':'Created Question Successfully'}, status=status.HTTP_201_CREATED)
+        return Response({'message':'Created Question Successfully',
+                         'question_id':create_question.id}, status=status.HTTP_201_CREATED)
 
 
     def get(self, request, quiz_id):
@@ -299,16 +300,30 @@ class QuestionListCreate(APIView):
         createdBy = User.objects.filter(id=payload['id']).first()
         quiz = Quiz.objects.filter(createdBy=createdBy, id=quiz_id).first()
         questions = QuizQuestions.objects.filter(quiz=quiz).order_by('-order')
-        question_data = [
-            {
-                'order': question.order,
-                'question' : question.question.question,
-                'questionType' : question.question.questionType,
-                'marks' : question.marks,
-            }
-            for question in questions
-            if question.isActive
-        ]
+        
+        question_data = []
+        for question in questions:
+            if question.isActive:
+                # Build base question data
+                q_data = {
+                    'order': question.order,
+                    'question': question.question.question,
+                    'questionType': question.question.questionType,
+                    'marks': question.marks,
+                }
+                
+                # Add options only for MCQ type questions
+                if question.question.questionType in ['MCQ', 'Multiple Choice']:
+                    options = Options.objects.filter(question=question.question)
+                    q_data['options'] = [
+                        {
+                            'option': opt.option,
+                            'isCorrect': opt.isCorrect
+                        }
+                        for opt in options
+                    ]
+                
+                question_data.append(q_data)
 
         return Response(question_data)
     
@@ -336,7 +351,8 @@ class OptionListCreate(APIView):
         options = Options.objects.filter(question=question)
         option_list = [
             {
-                'option': option.option
+                'option': option.option,
+                'isCorrect': option.isCorrect
             }
             for option in options
         ]

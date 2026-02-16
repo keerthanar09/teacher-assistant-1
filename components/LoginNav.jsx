@@ -56,13 +56,14 @@ const LoginNav = () => {
             <a href="/login" className="hover:text-blue-600">
               Log In
             </a>
+            <a href="/about" className="hover:text-blue-600">
+              About
+            </a>
           </nav>
         </div>
       </div>
 
-      <div className="flex flex-row justify-end">
-        <button className="serious-button">Log out</button>
-      </div>
+
     </nav>
   );
 }
