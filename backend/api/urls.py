@@ -14,4 +14,12 @@ urlpatterns = [
     path('allquiz', ListAllUserQuiz.as_view()),
     path('question/<int:quiz_id>', QuestionListCreate.as_view()), #creates and lists questions in a quiz based on request type (post and put)
     path('option/<int:question_id>', OptionListCreate.as_view()),
+    # Student endpoints
+    path('room/join', room_join),
+    path('student/rooms', student_rooms),
+    path('room/<uuid:roomid>', room_detail),
+    path('room/<uuid:roomid>/quizzes', room_quizzes),
+    path('quiz/<int:quiz_id>/details', student_quiz_detail),
+    path('quiz/<int:quiz_id>/questions', student_question_list),
+    path('quiz/<int:quiz_id>/attempts', submit_quiz_attempt),
 ]

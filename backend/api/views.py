@@ -93,8 +93,7 @@ class LogoutView(APIView):
         response = Response()
         response.delete_cookie(
             'jwt',
-            samesite='None' if not settings.DEBUG else 'Lax',
-            secure=not settings.DEBUG
+            samesite='None' if not settings.DEBUG else 'Lax'
         )
         response.data={
             'message':'success'
@@ -378,3 +377,202 @@ class OptionDetail(APIView):
 
     def delete(self, request, option_id):
         pass
+
+
+# ------------------ Student-facing endpoints ------------------
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
+
+
+@api_view(['POST'])
+def room_join(request):
+    # Join a room using class code
+    payload = checkAuth(request)
+    code = request.data.get('code') or request.data.get('classcode')
+    if not code:
+        return Response({'error': 'Missing class code'}, status=status.HTTP_400_BAD_REQUEST)
+
+    room = Room.objects.filter(classcode=code).first()
+    if not room:
+        return Response({'error': 'Room not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    user = User.objects.filter(id=payload['id']).first()
+    # create allotment if not exists
+    allot, created = RoomAllotments.objects.get_or_create(user=user, roomid=room)
+
+    room_data = {
+        'id': str(room.id),
+        'title': room.name,
+        'description': f'Class created by {room.createdBy.name or room.createdBy.username}',
+        'subject': '',
+    }
+    return Response(room_data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def student_rooms(request):
+    payload = checkAuth(request)
+    user = User.objects.filter(id=payload['id']).first()
+    allotments = RoomAllotments.objects.filter(user=user).select_related('roomid')
+    rooms = []
+    for a in allotments:
+        room = a.roomid
+        rooms.append({
+            'id': str(room.id),
+            'title': room.name,
+            'description': f'Class created by {room.createdBy.name or room.createdBy.username}',
+            'subject': '',
+        })
+    return Response(rooms)
+
+
+@api_view(['GET'])
+def room_detail(request, roomid):
+    payload = checkAuth(request)
+    user = User.objects.filter(id=payload['id']).first()
+    room = Room.objects.filter(id=roomid).first()
+    if not room:
+        return Response({'error': 'Room not found'}, status=status.HTTP_404_NOT_FOUND)
+    # Ensure user is part of room
+    if not RoomAllotments.objects.filter(user=user, roomid=room).exists():
+        return Response({'error': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
+
+    data = {
+        'id': str(room.id),
+        'title': room.name,
+        'description': f'Class created by {room.createdBy.name or room.createdBy.username}',
+        'subject': '',
+    }
+    return Response(data)
+
+
+@api_view(['GET'])
+def room_quizzes(request, roomid):
+    payload = checkAuth(request)
+    user = User.objects.filter(id=payload['id']).first()
+    room = Room.objects.filter(id=roomid).first()
+    if not room:
+        return Response({'error': 'Room not found'}, status=status.HTTP_404_NOT_FOUND)
+    # Ensure user is part of room
+    if not RoomAllotments.objects.filter(user=user, roomid=room).exists():
+        return Response({'error': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
+
+    quizzes = Quiz.objects.filter(room=room).order_by('-createdAt')
+    data = []
+    for q in quizzes:
+        attempted = QuizTaken.objects.filter(user=user, quiz=q).exists()
+        data.append({
+            'id': q.id,
+            'title': q.title,
+            'description': q.description,
+            'attempted': attempted,
+        })
+    return Response(data)
+
+
+@api_view(['GET'])
+def student_quiz_detail(request, quiz_id):
+    payload = checkAuth(request)
+    user = User.objects.filter(id=payload['id']).first()
+    quiz = Quiz.objects.filter(id=quiz_id).first()
+    if not quiz:
+        return Response({'error': 'Quiz not found'}, status=status.HTTP_404_NOT_FOUND)
+    # Ensure user is part of room
+    if not RoomAllotments.objects.filter(user=user, roomid=quiz.room).exists():
+        return Response({'error': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
+
+    return Response({
+        'id': quiz.id,
+        'title': quiz.title,
+        'description': quiz.description,
+    })
+
+
+@api_view(['GET'])
+def student_question_list(request, quiz_id):
+    payload = checkAuth(request)
+    user = User.objects.filter(id=payload['id']).first()
+    quiz = Quiz.objects.filter(id=quiz_id).first()
+    if not quiz:
+        return Response({'error': 'Quiz not found'}, status=status.HTTP_404_NOT_FOUND)
+    # ensure membership
+    if not RoomAllotments.objects.filter(user=user, roomid=quiz.room).exists():
+        return Response({'error': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
+
+    qqs = QuizQuestions.objects.filter(quiz=quiz, isActive=True).order_by('order')
+    out = []
+    for qq in qqs:
+        q = qq.question
+        qdata = {
+            'id': q.id,
+            'order': qq.order,
+            'question': q.question,
+            'questionType': q.questionType,
+            'marks': qq.marks,
+        }
+        if q.questionType == 'MCQ':
+            opts = Options.objects.filter(question=q)
+            qdata['options'] = [
+                {'id': opt.id, 'option': opt.option}
+                for opt in opts
+            ]
+        out.append(qdata)
+    return Response(out)
+
+
+@api_view(['POST'])
+def submit_quiz_attempt(request, quiz_id):
+    # Accepts payload: { answers: [{ question: <id>, answer: <optionId or text> }, ... ] }
+    payload = checkAuth(request)
+    user = User.objects.filter(id=payload['id']).first()
+    quiz = Quiz.objects.filter(id=quiz_id).first()
+    if not quiz:
+        return Response({'error': 'Quiz not found'}, status=status.HTTP_404_NOT_FOUND)
+    if not RoomAllotments.objects.filter(user=user, roomid=quiz.room).exists():
+        return Response({'error': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
+
+    # prevent re-attempts
+    if QuizTaken.objects.filter(user=user, quiz=quiz).exists():
+        return Response({'error': 'Quiz already taken'}, status=status.HTTP_409_CONFLICT)
+
+    answers = request.data.get('answers', [])
+    # create QuizTaken
+    taken = QuizTaken.objects.create(user=user, quiz=quiz, grades=0.0)
+    total_score = 0.0
+
+    for a in answers:
+        qid = a.get('question')
+        ans = a.get('answer')
+        question = Questions.objects.filter(id=qid).first()
+        if not question:
+            continue
+        qq = QuizQuestions.objects.filter(quiz=quiz, question=question).first()
+        marks_awarded = 0.0
+        sel_option = None
+        desc = None
+        if question.questionType == 'MCQ':
+            try:
+                sel_option = Options.objects.filter(id=int(ans)).first()
+            except Exception:
+                sel_option = None
+            if sel_option and sel_option.isCorrect:
+                marks_awarded = qq.marks if qq else 0.0
+        else:
+            desc = ans or ''
+            marks_awarded = None
+
+        StudentAnswers.objects.create(
+            quizTaken=taken,
+            question=question,
+            selectedOption=sel_option,
+            descAnswer=desc,
+            marksObtained=marks_awarded,
+        )
+        if marks_awarded:
+            total_score += marks_awarded
+
+    # update grade for MCQ auto-graded portion
+    taken.grades = total_score
+    taken.save()
+
+    return Response({'message': 'Attempt submitted', 'score': total_score}, status=status.HTTP_201_CREATED)
