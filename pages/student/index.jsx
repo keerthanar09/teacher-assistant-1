@@ -65,15 +65,18 @@ export default function StudentDashboard() {
 
   return (
     <Layout isAuth={true} role="STUDENT">
+      <h1 className="text-center font-mono text-5xl text-bold">
+        Student Dashboard
+      </h1>
       <div className="max-w-6xl mx-auto p-6 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 10% 10%, rgba(255,255,255,0.06) 0 2px, transparent 2px), radial-gradient(circle at 80% 40%, rgba(59,130,246,0.04) 0 2px, transparent 2px)" }} />
-        <div className="relative z-10 p-6 rounded-xl mb-6 bg-blue-900/30">
-          <h1 className="text-center font-mono text-5xl font-bold mb-2">{user?.name || "Student Dashboard"}</h1>
+        <div className="mb-6">
+          <h1 className="text-center font-mono p-5 text-2xl">Welcome, {user?.name || "Student"}</h1>
           <p className="text-center text-gray-300">Join classes using a class code and take quizzes.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="col-span-1 md:col-span-1 bg-blue-800 p-6 rounded-xl">
+          <div className="col-span-1 md:col-span-1 bg-linear-to-r from-sky-400 to-sky-600 p-6 rounded-xl shadow-xl shadow-blue-900">
             <h2 className="text-2xl font-semibold mb-4">Join a Class</h2>
             <form onSubmit={joinRoom} className="space-y-4">
               <input
@@ -90,7 +93,7 @@ export default function StudentDashboard() {
             </form>
           </div>
 
-          <div className="md:col-span-2 bg-blue-900 p-6 rounded-xl">
+          <div className="md:col-span-2 bg-linear-to-r from-sky-400 to-sky-600 p-6 rounded-xl shadow-xl shadow-blue-900">
             <h2 className="text-2xl font-semibold mb-4">Joined Classes</h2>
             {load ? (
               <p className="text-gray-400 animate-pulse">Loading classes...</p>
@@ -101,7 +104,7 @@ export default function StudentDashboard() {
                     <div>
                       <h3 className="text-lg font-medium">{room.title}</h3>
                       <p className="text-sm text-gray-400">{room.description}</p>
-                      <p className="text-xs text-gray-500">Subject: {room.subject}</p>
+                      <p className="text-xs text-gray-500">Class code: {room.classcode}</p>
                     </div>
                     <div className="flex gap-2">
                       <button onClick={() => router.push(`/student/room/${room.id}`)} className="blue-button-with-hover px-4 py-2">
@@ -123,68 +126,3 @@ export default function StudentDashboard() {
     </Layout>
   );
 }
-
-
-
-// import { useRouter } from 'next/router';
-// import { useState, useEffect } from 'react';
-// import { useSession } from "next-auth/react";
-// import { getServerSession } from "next-auth/next";
-// import {Layout} from '@layouts/layout';
-
-
-// export default function StudentDashboard() {
-//   const router = useRouter();
-//   const [classCode, setClassCode] = useState("");
-//   const [error, setError] = useState("");
-//   const { data: session, status } = useSession();
-//   const [message, setMessage] = useState();
-//   const [auth, setAuth] = useState(false);
-
-//   useEffect(()=> {
-//     (
-//       async () => {
-//         try{const response = await fetch('http://127.0.0.1:8000/api/user', {
-//           credentials:'include',
-//         });
-//         const content = await response.json();
-
-//         setMessage(`hi, ${content.name}`)
-//         setAuth(true);
-//       } catch (err){
-//         setMessage(`You are not logged in!`)
-//         setAuth(false);
-//       }
-        
-//       }
-//     )
-//   })
-
-
-
-//   return (
-//     <Layout auth={auth}>
-//     <div className="min-h-screen bg-dark text-white p-10">
-//       <h1 className="text-4xl font-bold mb-6 text-center">Student Dashboard</h1>
-
-
-//         {/* Join Class Section */}
-//         <div className="w-full bg-linear-to-r from-background to-sky-900 p-6 rounded-lg shadow-xl shadow-sky-800 text-center">
-//           <h2 className="text-2xl mb-4">Join a Class</h2>
-//           <input
-//             type="text"
-//             placeholder="Enter Class Code"
-//             className="p-2 bg-blue-400 text-black rounded-lg w-full mb-4"
-//             value={classCode}
-//           />
-//           {error && <p className="text-red-500">{error}</p>}
-//           <button
-//             className="px-6 py-3 bg-sky-500 rounded-lg hover:bg-sky-700 transition-all transform hover:scale-105"
-//           >
-//             Join Class
-//           </button>
-//         </div>
-//       </div>
-// </Layout>
-//   );
-// }

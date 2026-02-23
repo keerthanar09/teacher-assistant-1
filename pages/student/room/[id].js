@@ -42,10 +42,10 @@ export default function StudentRoomPage() {
         <div className="p-6 rounded-xl mb-6 bg-blue-900/20">
           <h1 className="text-4xl font-mono font-bold mb-1">{room?.title || "Class"}</h1>
           <p className="text-gray-300">{room?.description}</p>
-          <p className="text-gray-400">Subject: {room?.subject}</p>
+          <p className="text-gray-400">Class Code: {room?.classcode}</p>
         </div>
 
-        <div className="bg-blue-900 p-6 rounded-xl">
+        <div className="bg-linear-to-r from-blue-900 to-sky-700 shadow-lg shadow-blue-300 p-6 rounded-xl">
           <h2 className="text-2xl font-mono mb-4">Quizzes</h2>
 
           {load ? (

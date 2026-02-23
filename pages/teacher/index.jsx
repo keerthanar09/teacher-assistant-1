@@ -164,7 +164,7 @@ export default function TeacherDashboard() {
                           Open
                         </button>
                         <button
-                          className="black-border-button m-3"
+                          className="black-border-red-button m-3"
                           onClick={() => deleteClass(cls.id)}
                         >
                           Delete

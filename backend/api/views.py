@@ -9,6 +9,8 @@ from rest_framework.exceptions import AuthenticationFailed
 from datetime import datetime, timezone, timedelta
 import jwt
 from django.conf import settings
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
 # Create your views here.
 
 
@@ -379,14 +381,12 @@ class OptionDetail(APIView):
         pass
 
 
-# ------------------ Student-facing endpoints ------------------
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view
+# Student Views
+
 
 
 @api_view(['POST'])
 def room_join(request):
-    # Join a room using class code
     payload = checkAuth(request)
     code = request.data.get('code') or request.data.get('classcode')
     if not code:
@@ -397,7 +397,6 @@ def room_join(request):
         return Response({'error': 'Room not found'}, status=status.HTTP_404_NOT_FOUND)
 
     user = User.objects.filter(id=payload['id']).first()
-    # create allotment if not exists
     allot, created = RoomAllotments.objects.get_or_create(user=user, roomid=room)
 
     room_data = {
@@ -421,7 +420,7 @@ def student_rooms(request):
             'id': str(room.id),
             'title': room.name,
             'description': f'Class created by {room.createdBy.name or room.createdBy.username}',
-            'subject': '',
+            'classcode': room.classcode,
         })
     return Response(rooms)
 
@@ -531,12 +530,10 @@ def submit_quiz_attempt(request, quiz_id):
     if not RoomAllotments.objects.filter(user=user, roomid=quiz.room).exists():
         return Response({'error': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
 
-    # prevent re-attempts
     if QuizTaken.objects.filter(user=user, quiz=quiz).exists():
         return Response({'error': 'Quiz already taken'}, status=status.HTTP_409_CONFLICT)
 
     answers = request.data.get('answers', [])
-    # create QuizTaken
     taken = QuizTaken.objects.create(user=user, quiz=quiz, grades=0.0)
     total_score = 0.0
 
@@ -571,7 +568,6 @@ def submit_quiz_attempt(request, quiz_id):
         if marks_awarded:
             total_score += marks_awarded
 
-    # update grade for MCQ auto-graded portion
     taken.grades = total_score
     taken.save()
 

@@ -85,7 +85,7 @@ class QuizQuestions(models.Model):
     id = models.AutoField(primary_key=True)
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     question = models.ForeignKey(Questions, on_delete=models.CASCADE)
-    order = models.IntegerField(unique=True)
+    order = models.IntegerField()
     marks = models.FloatField()
     isActive = models.BooleanField(default=True)
 

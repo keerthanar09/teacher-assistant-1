@@ -205,7 +205,7 @@ export default function QuizPage() {
                   {questions.map((q, index) => (
                     <div
                       key={index}
-                      className="bg-black p-5 rounded-lg shadow-xl shadow-blue-300"
+                      className="bg-black p-5 rounded-lg "
                     >
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
