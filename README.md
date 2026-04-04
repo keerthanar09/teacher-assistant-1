@@ -18,15 +18,15 @@ v0.1 and v0.2 are done. So far, teachers and students can register and login. JW
 ### v0.3 — Teacher view: per-room, per-quiz history & review — 2 sprints (1 weeks)
 
 #### Features:
-Teacher can open quiz history for a quiz inside a room: list attempts, view per-student answers, timestamps, and score.
-Export CSV per quiz attempt list.
-Backend/API:
+- Teacher can open quiz history for a quiz inside a room: list attempts, view per-student answers, timestamps, and score.
+- Export CSV per quiz attempt list.
+- Backend/API:
 GET /room/:roomId/quiz/:quizId/attempts (with pagination/filtering)
 GET /attempt/:attemptId (full attempt payload)
-Frontend files to update/add:
+- Frontend files to update/add:
 pages/teacher/room/[id]/quizzes/[quizId]/history.js
-Reuse Layout and auth gate useAuth.
-Acceptance: Teacher can view and export all attempts for a quiz in the room.
+- Reuse Layout and auth gate useAuth.
+- *Acceptance*: Teacher can view and export all attempts for a quiz in the room.
 
 ### v0.4 — User profiles & role UX — 2 sprints (1 weeks)
 
@@ -80,3 +80,41 @@ Acceptance: CI with test coverage; security review done.
 
 
 
+## Project Setup
+
+Follow the following steps for first time setup on a local device. Start off by cloning the repository and opening your code editer in the `teacher-assistant-1` folder.
+```
+git clone https://github.com/keerthanar09/teacher-assistant-1
+cd teacher-assistant-1
+```
+
+
+1) Set up a database in supabase and enter the details of the database in `backend/settings.py`.
+
+2) Open terminal 1 and run the following commands one by one: 
+```
+cd backend
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+python manage.py runserver
+```
+
+3) Open terminal 2 and run the following commands one by one: 
+```
+npm install
+npm run dev
+```
+
+Following this, everytime you want to re-start the project, run the following commands in their respective terminals:
+```
+# Terminal 1 - Backend (Django)
+
+cd backend 
+venv\Scripts\activate
+python manage.py runserver
+
+# Terminal 2 - Frontend (Next.js)
+
+npm run dev
+```
