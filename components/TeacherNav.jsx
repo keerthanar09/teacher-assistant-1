@@ -67,18 +67,10 @@ const TeacherNav = () => {
             <a href="/teacher/view-room" className="hover:text-blue-600">
               View Classes
             </a>
-            <a href="/teacher/quiz-create" className="hover:text-blue-600">
-              Create Quiz
-            </a>
-            <a href="/teacher/quiz-generation" className="hover:text-blue-600">
-              Generate Quiz
-            </a>
             <a href="/teacher/student-details" className="hover:text-blue-600">
-              View Student Details
+              View Student Records
             </a>
-            <a href="/teacher/submissions" className="hover:text-blue-600">
-              View Submissions
-            </a>
+
             <a href="/teacher/profile" className="hover:text-blue-600">
               Profile
             </a>

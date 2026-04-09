@@ -10,10 +10,10 @@ export default function QuizPage() {
   const { user, loading } = useAuth("TEACHER");
   const router = useRouter();
   const { id, title, description, subject } = router.query;
-  
+
   const [questions, setQuestions] = useState([]);
   const [load, setLoad] = useState(true);
-  
+
   // Question Modal State
   const [showQuestionModal, setShowQuestionModal] = useState(false);
   const [question, setQuestion] = useState("");
@@ -21,13 +21,13 @@ export default function QuizPage() {
   const [order, setOrder] = useState(1);
   const [marks, setMarks] = useState(1);
   const [createdQuestionId, setCreatedQuestionId] = useState(null);
-  
+
   // Options Modal State
   const [showOptionsModal, setShowOptionsModal] = useState(false);
   const [option, setOption] = useState("");
   const [isCorrect, setIsCorrect] = useState(false);
   const [optionsList, setOptionsList] = useState([]);
-  
+
   const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const quiz = {
@@ -51,7 +51,6 @@ export default function QuizPage() {
       });
       if (res.ok) {
         const data = await res.json();
-        // Sort questions in ascending order by order field
         const sortedQuestions = data.sort((a, b) => a.order - b.order);
         setQuestions(sortedQuestions);
       }
@@ -78,12 +77,10 @@ export default function QuizPage() {
       });
 
       const data = await res.json();
-      
+
       if (res.ok) {
         // Close question modal
         setShowQuestionModal(false);
-        
-        // If MCQ, open options modal
         if (questionType === "MCQ" || questionType === "Multiple Choice") {
           setCreatedQuestionId(data.question_id); // Assuming backend returns question_id
           setShowOptionsModal(true);
@@ -104,7 +101,7 @@ export default function QuizPage() {
 
   const addOption = async (e) => {
     e.preventDefault();
-    
+
     if (!option.trim()) {
       alert("Please enter an option");
       return;
@@ -124,7 +121,7 @@ export default function QuizPage() {
       if (res.ok) {
         // Add to local list for display
         setOptionsList((prev) => [...prev, { option, isCorrect }]);
-        
+
         // Reset option form
         setOption("");
         setIsCorrect(false);
@@ -168,6 +165,10 @@ export default function QuizPage() {
     alert("Delete functionality coming soon!");
   };
 
+  const openQuizHistory = () => {
+    router.push(`/teacher/quiz/${id}/attempts`);
+  }
+
   if (loading || !router.isReady) return null;
 
   return (
@@ -177,23 +178,41 @@ export default function QuizPage() {
           <h1 className="text-center font-mono text-6xl font-bold mb-2">
             {quiz.title}
           </h1>
-          <p className="text-center text-gray-300 text-lg">{quiz.description}</p>
+          <p className="text-center text-gray-300 text-lg">
+            {quiz.description}
+          </p>
           <p className="text-center text-gray-400">Subject: {quiz.subject}</p>
         </div>
 
-        <div className="mb-6 text-center">
+        <div className="flex flex-row mb-6 justify-center">
           <button
             onClick={openQuestionModal}
-            className="blue-button-with-hover px-6 py-3 text-lg"
+            className=" blue-button-with-hover px-6 py-3 text-lg ml-5 mr-5"
           >
             + Create Question
+          </button>
+          <button
+            onClick={openQuizHistory}
+            className="flex items-center gap-2 blue-button-with-hover px-6 py-3 text-lg ml-5 mr-5"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-card-checklist"
+              viewBox="0 0 16 16"
+            >
+              <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z" />
+              <path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0M7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0" />
+            </svg> <span>View Quiz Attempts</span>
           </button>
         </div>
 
         {/* Questions List */}
         <div className="bg-blue-900 p-10 rounded-xl ">
           <h2 className="text-3xl font-mono mb-6 text-center">Questions</h2>
-          
+
           {load ? (
             <p className="text-gray-400 animate-pulse text-center">
               Loading questions...
@@ -203,10 +222,7 @@ export default function QuizPage() {
               {questions.length > 0 ? (
                 <div className="space-y-8">
                   {questions.map((q, index) => (
-                    <div
-                      key={index}
-                      className="bg-black p-5 rounded-lg "
-                    >
+                    <div key={index} className="bg-black p-5 rounded-lg ">
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
@@ -217,41 +233,45 @@ export default function QuizPage() {
                               {q.questionType}
                             </span>
                             <span className="bg-green-600 px-3 py-1 rounded text-sm">
-                              {q.marks} {q.marks === 1 ? 'mark' : 'marks'}
+                              {q.marks} {q.marks === 1 ? "mark" : "marks"}
                             </span>
                           </div>
                           <p className="text-lg font-medium text-white mb-3">
                             {q.question}
                           </p>
-                          
+
                           {/* Display options if MCQ */}
-                          {(q.questionType === "MCQ" || q.questionType === "Multiple Choice") && q.options && (
-                            <div className="mt-4 space-y-2">
-                              <p className="text-sm text-gray-400 mb-2">Options:</p>
-                              {q.options.map((opt, optIndex) => (
-                                <div
-                                  key={optIndex}
-                                  className={`flex items-center gap-2 p-3 rounded ${
-                                    opt.isCorrect
-                                      ? "bg-green-900 border-2 border-green-500"
-                                      : "bg-gray-700"
-                                  }`}
-                                >
-                                  <span className="font-mono text-gray-300">
-                                    {String.fromCharCode(65 + optIndex)}.
-                                  </span>
-                                  <span className="flex-1">{opt.option}</span>
-                                  {opt.isCorrect && (
-                                    <span className="bg-green-500 px-2 py-1 rounded text-xs font-semibold">
-                                      ✓ Correct
+                          {(q.questionType === "MCQ" ||
+                            q.questionType === "Multiple Choice") &&
+                            q.options && (
+                              <div className="mt-4 space-y-2">
+                                <p className="text-sm text-gray-400 mb-2">
+                                  Options:
+                                </p>
+                                {q.options.map((opt, optIndex) => (
+                                  <div
+                                    key={optIndex}
+                                    className={`flex items-center gap-2 p-3 rounded ${
+                                      opt.isCorrect
+                                        ? "bg-green-900 border-2 border-green-500"
+                                        : "bg-gray-700"
+                                    }`}
+                                  >
+                                    <span className="font-mono text-gray-300">
+                                      {String.fromCharCode(65 + optIndex)}.
                                     </span>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                                    <span className="flex-1">{opt.option}</span>
+                                    {opt.isCorrect && (
+                                      <span className="bg-green-500 px-2 py-1 rounded text-xs font-semibold">
+                                        ✓ Correct
+                                      </span>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                         </div>
-                        
+
                         <button
                           onClick={() => deleteQuestion(q.id)}
                           className="ml-4 bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition-colors"
@@ -264,7 +284,8 @@ export default function QuizPage() {
                 </div>
               ) : (
                 <p className="text-gray-400 text-center bg-gray-800 p-6 rounded-lg">
-                  No questions created yet. Click "Create Question" to add your first question.
+                  No questions created yet. Click "Create Question" to add your
+                  first question.
                 </p>
               )}
             </>

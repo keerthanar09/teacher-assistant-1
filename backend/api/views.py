@@ -380,9 +380,182 @@ class OptionDetail(APIView):
     def delete(self, request, option_id):
         pass
 
+@api_view(['GET'])
+def teacher_quiz_attempts(request, quiz_id):
+    payload = checkAuth(request)
+    teacher = User.objects.filter(id=payload['id']).first()
+
+    quiz = Quiz.objects.filter(id=quiz_id, createdBy=teacher).first()
+    if not quiz:
+        return Response({'error': 'Quiz not found'}, status=404)
+
+    attempts = QuizTaken.objects.filter(quiz=quiz).order_by('-takenAt')
+
+    # calculate max marks dynamically
+    quiz_questions = QuizQuestions.objects.filter(quiz=quiz)
+    max_marks = sum([q.marks for q in quiz_questions])
+
+    data = []
+    for a in attempts:
+        # check if any descriptive answer is not evaluated
+        answers = StudentAnswers.objects.filter(quizTaken=a)
+        is_evaluated = True
+        for ans in answers:
+            if ans.question.questionType == "DESC" and ans.marksObtained is None:
+                is_evaluated = False
+
+        data.append({
+            "id": a.id,
+            "student": a.user.name or a.user.username,
+            "grades": a.grades,
+            "maxGrades": max_marks,
+            "takenAt": a.takenAt,
+            "status": "Evaluated" if is_evaluated else "Yet to be determined"
+        })
+
+    return Response(data)
+
+@api_view(['GET'])
+def teacher_attempt_detail(request, attempt_id):
+    payload = checkAuth(request)
+    teacher = User.objects.filter(id=payload['id']).first()
+
+    attempt = QuizTaken.objects.filter(
+        id=attempt_id,
+        quiz__createdBy=teacher
+    ).first()
+
+    if not attempt:
+        return Response({'error': 'Attempt not found'}, status=404)
+
+    answers = StudentAnswers.objects.filter(quizTaken=attempt)
+
+    response = []
+
+    for ans in answers:
+        q = ans.question
+        qq = QuizQuestions.objects.filter(quiz=attempt.quiz, question=q).first()
+
+        q_data = {
+            "answerId": ans.id,
+            "question": q.question,
+            "type": q.questionType,
+            "marks": qq.marks if qq else 0,
+            "marksObtained": ans.marksObtained,
+        }
+
+        if q.questionType == "MCQ":
+            options = Options.objects.filter(question=q)
+            q_data["options"] = [
+                {
+                    "option": opt.option,
+                    "isCorrect": opt.isCorrect,
+                    "isSelected": ans.selectedOption and opt.id == ans.selectedOption.id
+                }
+                for opt in options
+            ]
+        else:
+            q_data["descAnswer"] = ans.descAnswer
+
+        response.append(q_data)
+
+    # compute max marks
+    quiz_questions = QuizQuestions.objects.filter(quiz=attempt.quiz)
+    max_marks = sum([q.marks for q in quiz_questions])
+
+    return Response({
+        "student": attempt.user.username,
+        "grades": attempt.grades,
+        "maxGrades": max_marks,
+        "answers": response
+    })
+
+@api_view(['POST'])
+def evaluate_answer(request, answer_id):
+    payload = checkAuth(request)
+    teacher = User.objects.filter(id=payload['id']).first()
+
+    answer = StudentAnswers.objects.filter(id=answer_id).first()
+    if not answer:
+        return Response({'error': 'Answer not found'}, status=404)
+
+    marks = float(request.data.get("marks", 0))
+
+    answer.marksObtained = marks
+    answer.save()
+
+    DescriptiveEvaluation.objects.update_or_create(
+        answer=answer,
+        defaults={
+            "evaluatedBy": teacher,
+            "feedback": request.data.get("feedback", "")
+        }
+    )
+
+    # recalculate total score
+    attempt = answer.quizTaken
+    total = 0
+
+    all_answers = StudentAnswers.objects.filter(quizTaken=attempt)
+    for a in all_answers:
+        if a.marksObtained:
+            total += a.marksObtained
+
+    attempt.grades = total
+    attempt.save()
+
+    return Response({"message": "Evaluated successfully"})
+
+import csv
+from django.http import HttpResponse
+
+@api_view(['GET'])
+def export_quiz_attempts_csv(request, quiz_id):
+    payload = checkAuth(request)
+    teacher = User.objects.filter(id=payload['id']).first()
+
+    quiz = Quiz.objects.filter(id=quiz_id, createdBy=teacher).first()
+    if not quiz:
+        return Response({'error': 'Quiz not found'}, status=404)
+
+    attempts = QuizTaken.objects.filter(quiz=quiz).order_by('-takenAt')
+
+    quiz_questions = QuizQuestions.objects.filter(quiz=quiz)
+    max_marks = sum([q.marks for q in quiz_questions])
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="quiz_{quiz_id}_attempts.csv"'
+
+    writer = csv.writer(response)
+
+    writer.writerow([
+        'Student Name',
+        'Score',
+        'Max Score',
+        'Date & Time',
+        'Status'
+    ])
+
+    for a in attempts:
+        answers = StudentAnswers.objects.filter(quizTaken=a)
+
+        is_evaluated = True
+        for ans in answers:
+            if ans.question.questionType == "DESC" and ans.marksObtained is None:
+                is_evaluated = False
+
+        writer.writerow([
+            a.user.name or a.user.username,
+            a.grades,
+            max_marks,
+            a.takenAt.strftime("%Y-%m-%d %H:%M:%S"),
+            "Evaluated" if is_evaluated else "Yet to be determined"
+        ])
+
+    return response
+
 
 # Student Views
-
 
 
 @api_view(['POST'])
