@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 
 export default function Profile() {
   const {user, loading} = useAuth("TEACHER");
-
+  if (loading) return null;
   return (
     <Layout isAuth={true} role="TEACHER">
       <div className='flex flex-col'>

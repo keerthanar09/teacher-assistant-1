@@ -26,6 +26,7 @@ GET /attempt/:attemptId (full attempt payload)
 
 ### Patches/Improvements Required from previous versions.
 
+- Session timeout is not handled gracefully. This needs to be fixed.
 - Need to view per question marks while viewing answers from students in an attempt. 
 - Limit the marks alloted for a DESC question by a teacher to the maximum marks.
 - Paginations and Numbering of records required
