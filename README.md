@@ -49,3 +49,9 @@ python manage.py runserver
 
 npm run dev
 ```
+
+## Database Structure
+
+The following is the Entity Relationship Diagram for the application's database schema entities.
+
+![ER Diagram](LearnCom.png "ER Diagram")
